@@ -1,6 +1,6 @@
 package com.project.model.dto;
 
-import com.project.model.enums.ServicePet;
+import com.project.model.entitys.enums.ServicePet;
 
 public record RegisterAnimalDTO(
      String name,

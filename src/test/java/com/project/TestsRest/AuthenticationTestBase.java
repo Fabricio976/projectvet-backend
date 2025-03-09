@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.project.model.dto.AuthenticationDTO;
 import com.project.model.dto.RegisterUserDTO;
-import com.project.model.enums.Role;
+import com.project.model.entitys.enums.Role;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

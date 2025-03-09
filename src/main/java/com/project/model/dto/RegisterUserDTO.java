@@ -1,6 +1,6 @@
 package com.project.model.dto;
 
-import com.project.model.enums.Role;
+import com.project.model.entitys.enums.Role;
 
 public record RegisterUserDTO(
         String name,

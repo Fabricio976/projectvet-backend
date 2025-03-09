@@ -2,7 +2,7 @@ package com.project.model.entitys;
 
 import java.util.Date;
 
-import com.project.model.enums.ServicePet;
+import com.project.model.entitys.enums.ServicePet;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

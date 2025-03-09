@@ -1,6 +1,7 @@
 package com.project.model.repositorys;
 
 import java.util.List;
+import java.util.Optional;
 
 
 import com.project.model.entitys.Animal;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AnimalRepository extends JpaRepository<Animal, String> {
+
+    Optional<Animal> findById(String id);
     
     Animal findByRg(int rg);
     

@@ -1,6 +1,7 @@
 package com.project.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class AnimalController {
     @Autowired
     private AnimalRepository animalRepository;
 
+
     /**
      * Busca todos os animais registrados.
      *
@@ -45,6 +47,11 @@ public class AnimalController {
     @GetMapping("/searchAll")
     public List<Animal> searchAllanimals(Authentication auth) throws Exception {
         return animalService.searchAllAnimals();
+    }
+
+    @GetMapping("/search/{id}")
+    public Optional<Animal> searchById(Authentication auth,@PathVariable String id) {
+        return animalRepository.findById(id);
     }
 
     /**

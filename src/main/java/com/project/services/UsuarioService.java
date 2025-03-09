@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.project.model.dto.RegisterUserDTO;
 import com.project.model.entitys.Usuario;
-import com.project.model.enums.Role;
+import com.project.model.entitys.enums.Role;
 import com.project.model.exeptions.RgNotFoundException;
 import com.project.model.repositorys.UserRepository;
 

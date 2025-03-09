@@ -1,8 +1,8 @@
-package com.project.model.enums;
+package com.project.model.entitys.enums;
 
 public enum ServicePet {
     PETSHOP("PetShop"),
-    VETERINARY("Clinica"),
+    VETERINARY("Clinica Veterinária"),
     PETCLINIC("Clinica e PetShop");
 
     private final String servicePet;

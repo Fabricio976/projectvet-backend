@@ -29,10 +29,10 @@ public class SecurityConfigurations {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Adiciona suporte a CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/projectvet/**").permitAll() // Permite POST em /projectvet/**
-                        .requestMatchers(HttpMethod.OPTIONS, "/projectvet/**").permitAll() // Permite OPTIONS (preflight)
+                        .requestMatchers(HttpMethod.POST, "/projectvet/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/projectvet/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/projectvet/register/funcionario").hasRole("MANAGER")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -157,7 +157,7 @@ public class AuthenticationController {
         if (this.userRepository.findByEmail(data.email()) != null) {
             throw new EmailAlreadyExistsException("Email já cadastrado!");
         }
-        usuarioService.regiterManager(data);
+        usuarioService.registerUser(data);
         return ResponseEntity.ok().body("Usuário cadastrado com sucesso!");
     }
 

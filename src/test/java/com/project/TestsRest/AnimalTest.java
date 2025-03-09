@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 import com.project.model.dto.AuthenticationDTO;
 import com.project.model.dto.RegisterAnimalDTO;
-import com.project.model.enums.ServicePet;
+import com.project.model.entitys.enums.ServicePet;
 
 import static io.restassured.RestAssured.given;
 

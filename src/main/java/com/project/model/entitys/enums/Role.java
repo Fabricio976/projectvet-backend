@@ -1,4 +1,4 @@
-package com.project.model.enums;
+package com.project.model.entitys.enums;
 
 public enum Role {
     CLIENT("Client"),

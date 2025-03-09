@@ -5,11 +5,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.project.model.enums.Role;
+import com.project.model.entitys.enums.Role;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -53,6 +55,7 @@ public class Usuario implements UserDetails {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateShippingCodigo;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "responsible")
     private List<Animal> animalsResponsible = new ArrayList<>();
 
