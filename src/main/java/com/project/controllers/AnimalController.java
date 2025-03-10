@@ -1,6 +1,8 @@
 package com.project.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.dto.RegisterAnimalDTO;
@@ -42,10 +43,9 @@ public class AnimalController {
      *
      * @param auth O objeto de autenticação do usuário.
      * @return Uma lista de todos os animais.
-     * @throws Exception Se ocorrer um erro durante a busca.
      */
     @GetMapping("/searchAll")
-    public List<Animal> searchAllanimals(Authentication auth) throws Exception {
+    public List<Animal> searchAllanimals(Authentication auth) {
         String userId = auth.getPrincipal().toString();
         String role = auth.getAuthorities().iterator().next().getAuthority();
 
@@ -60,7 +60,7 @@ public class AnimalController {
     }
 
     @GetMapping("/search/{id}")
-    public Optional<Animal> searchById(Authentication auth,@PathVariable String id) {
+    public Optional<Animal> searchById(@PathVariable String id) {
         return animalRepository.findById(id);
     }
 
@@ -69,22 +69,20 @@ public class AnimalController {
      *
      * @param cpf O CPF do responsável pelos animais.
      * @return Uma lista de animais associados ao CPF fornecido.
-     * @throws Exception Se ocorrer um erro durante a busca.
      */
     @GetMapping("/searchByUserCpf/{cpf}")
-    public List<Animal> searchByResponsible(@PathVariable String cpf) throws Exception {
+    public List<Animal> searchByResponsible(@PathVariable String cpf) {
         return animalRepository.findAnimalsByUserCpf(cpf);
     }
 
     /**
      * Busca um animal pelo RG.
      *
-     * @param auth O objeto de autenticação do usuário.
      * @param rg O RG do animal a ser buscado.
      * @return O animal correspondente ao RG fornecido.
      */
     @GetMapping("/animalRg/{rg}")
-    public Animal getAnimaisByUserCpf(Authentication auth, @PathVariable int rg) {
+    public Animal getAnimaisByUserCpf(@PathVariable int rg) {
         return animalService.findByRg(rg);
     }
 
@@ -102,23 +100,30 @@ public class AnimalController {
     /**
      * Edita o registro de um animal existente.
      *
-     * @param idAnimal O animal com os dados atualizados.
+     * @param id O animal com os dados atualizados.
      * @return Uma resposta com o status da operação.
      */
-    @PutMapping("/edit")
-    public ResponseEntity<?> alterar(@RequestParam("idanimal") Animal idAnimal) {
-        return ResponseEntity.ok().body(animalService.editRegister(idAnimal));
+    @PutMapping("/editAnimal/{id}")
+    public ResponseEntity<Map<String, String>> editAnimal(@PathVariable String id, @RequestBody Animal animal) {
+        if (!id.equals(animal.getId())) {
+            throw new IllegalArgumentException("IDs devem ser iguais");
+        }
+        String result = animalService.editRegister(animal);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", result);
+        return ResponseEntity.ok(response);
     }
-
     /**
      * Exclui um animal pelo RG.
      *
-     * @param rg O RG do animal a ser excluído.
+     * @param id O RG do animal a ser excluído.
      * @return Uma resposta vazia com o status da operação.
      */
-    @DeleteMapping("/excluir/{rg}")
-    public ResponseEntity<Void> excluir(@PathVariable("rg") Integer rg) {
-        animalService.excluir(rg);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Map<String, String>> deleteAnimal(@PathVariable String id) {
+        animalService.excluir(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Animal excluído com sucesso!");
+        return ResponseEntity.ok(response);
     }
 }

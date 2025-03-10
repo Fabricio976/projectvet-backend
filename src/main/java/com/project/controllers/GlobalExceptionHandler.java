@@ -4,6 +4,7 @@ import com.project.model.exeptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -61,5 +62,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<String> handleInvalidCredentialsException(InvalidCredentialsException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
+    /**
+     * Essa exceção é lançada quando o ID do animaal fornecido não é encontrado
+     *
+     * @return Resposta HTTP com status 404 (Not Found).
+     */
+    @ExceptionHandler(AnimalNotFoundException.class)
+    public ResponseEntity<String> animalNotFoundException(AnimalNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

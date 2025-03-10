@@ -2,7 +2,6 @@ package com.project.services;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import com.project.model.entitys.Animal;
 import com.project.model.entitys.Usuario;
 import com.project.model.exeptions.CpfNotFoundException;
 import com.project.model.exeptions.RgNotFoundException;
+import com.project.model.exeptions.AnimalNotFoundException;
 import com.project.model.repositorys.AnimalRepository;
 import com.project.model.repositorys.UserRepository;
 
@@ -44,21 +44,19 @@ public class AnimalService {
         }
         return animal;
     }
-    
+
     /**
      * Registra um novo animal no sistema.
      *
-     * @param id ID do usuário responsável pelo animal.
+     * @param id        ID do usuário responsável pelo animal.
      * @param animalDTO Objeto contendo os dados do animal.
      * @return Mensagem de confirmação do registro.
      * @throws CpfNotFoundException Se o usuário responsável não for encontrado.
      */
     public String registerAnimal(String id, RegisterAnimalDTO animalDTO) {
-        if (userRepository.findById(id).isEmpty()) {
-            throw new CpfNotFoundException("Usuário não encontrado!");
-        }
+        Usuario usuario = userRepository.findById(id)
+                .orElseThrow(() -> new CpfNotFoundException("Usuário não encontrado!"));
         Animal animal = new Animal();
-        Usuario usuario = userRepository.findById(id).get();
         animal.setResponsible(usuario);
         animal.setName(animalDTO.name());
         animal.setAge(animalDTO.age());
@@ -71,19 +69,38 @@ public class AnimalService {
         return "Animal Registrado!";
     }
 
-    
+    /**
+     * Edita o registro de um animal existente.
+     *
+     * @param animal Os novos dados a serem atualizados.
+     * @return Uma mensagem indicando o sucesso da operação.
+     * @throws AnimalNotFoundException Se o animal com o ID fornecido não for encontrado.
+     */
     public String editRegister(Animal animal) {
-        animalRepository.saveAndFlush(animal);
-        return ("Editado com Sucesso!");
+        Animal existingAnimal = animalRepository.findById(animal.getId())
+                .orElseThrow(() -> new AnimalNotFoundException("Animal não encontrado"));
+
+        Usuario responsible = existingAnimal.getResponsible();
+        existingAnimal.setName(animal.getName());
+        existingAnimal.setSpecie(animal.getSpecie());
+        existingAnimal.setRace(animal.getRace());
+        existingAnimal.setAge(animal.getAge());
+        existingAnimal.setServicePet(animal.getServicePet());
+        responsible.setNome(animal.getResponsible().getNome());
+        userRepository.save(responsible);
+
+        animalRepository.saveAndFlush(existingAnimal);
+        return "Editado com Sucesso!";
     }
 
-    public void excluir(Integer rg) {
-        Animal animal = animalRepository.findByRg(rg);
-        animalRepository.delete(animal);
+    public void excluir(String id) {
+        animalRepository.deleteById(id);
+
     }
 
     /**
      * Gera um número de 8 dígitos aleatorio para o RG do aniamal
+     *
      * @return Rg gerado
      */
     private int generateUniqueRg() {
