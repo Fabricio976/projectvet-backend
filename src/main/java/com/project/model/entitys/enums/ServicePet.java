@@ -1,17 +1,31 @@
 package com.project.model.entitys.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum ServicePet {
-    PETSHOP("PetShop"),
-    VETERINARY("Clinica Veterinária"),
-    PETCLINIC("Clinica e PetShop");
+    PETSHOP("Pet Shop"),
+    VETERINARY("Clínica Veterinária"),
+    PETCLINIC("Clínica e PetShop");
 
-    private final String servicePet;
+    private final String displayName;
 
-    ServicePet(String servicePet) {
-        this.servicePet = servicePet;
+    ServicePet(String displayName) {
+        this.displayName = displayName;
     }
 
-    public String getserv() {
-        return servicePet;
+    @JsonValue
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @JsonCreator
+    public static ServicePet fromDisplayName(String displayName) {
+        for (ServicePet service : ServicePet.values()) {
+            if (service.displayName.equalsIgnoreCase(displayName)) {
+                return service;
+            }
+        }
+        throw new IllegalArgumentException("Serviço inválido: " + displayName);
     }
 }

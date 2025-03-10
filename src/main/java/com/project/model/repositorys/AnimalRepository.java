@@ -22,4 +22,5 @@ public interface AnimalRepository extends JpaRepository<Animal, String> {
     @Query("SELECT a FROM Animal a WHERE a.responsible.cpf = :cpf")
     List<Animal> findAnimalsByUserCpf(@Param("cpf") String cpf);
 
+    List<Animal> findByResponsibleId(String id);
 }

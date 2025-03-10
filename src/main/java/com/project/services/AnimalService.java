@@ -33,6 +33,10 @@ public class AnimalService {
         return animalRepository.findAll();
     }
 
+    public List<Animal> searchAllAnimalsByUser(String id) {
+        return animalRepository.findByResponsibleId(id);
+    }
+
     public Animal findByRg(int rg) {
         Animal animal = animalRepository.findByRg(rg);
         if (animal == null) {

@@ -46,7 +46,17 @@ public class AnimalController {
      */
     @GetMapping("/searchAll")
     public List<Animal> searchAllanimals(Authentication auth) throws Exception {
-        return animalService.searchAllAnimals();
+        String userId = auth.getPrincipal().toString();
+        String role = auth.getAuthorities().iterator().next().getAuthority();
+
+        if (role.equals("MANAGER")) {
+            // Funcionários veem todos os animais
+            return animalService.searchAllAnimals();
+        } else {
+            // Clientes veem apenas seus animais
+            return animalService.searchAllAnimalsByUser(String.valueOf(userId));
+        }
+
     }
 
     @GetMapping("/search/{id}")
