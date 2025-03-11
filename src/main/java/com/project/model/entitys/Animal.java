@@ -30,6 +30,9 @@ public class Animal {
     private String race;
     private String specie;
 
+
+    private String photoUrl;
+
     @Temporal(TemporalType.DATE)
     private Date dateRegister;
 

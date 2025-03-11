@@ -93,6 +93,7 @@ public class AnimalService {
         return "Editado com Sucesso!";
     }
 
+
     public void excluir(String id) {
         animalRepository.deleteById(id);
 

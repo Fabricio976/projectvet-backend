@@ -21,9 +21,6 @@ public class ImagemService {
     @Value("${contato.disco.raiz}")
     private String raiz;
 
-    @Value("${contato.disco.diretorio-imagens}")
-    private String diretorioImagens;
-
     @Autowired
     private ImagemRepository imgRepository;
 
@@ -54,32 +51,13 @@ public class ImagemService {
         }
     }
 
-    public Imagem upImagem(MultipartFile file) throws IOException {
-
-        byte[] bytes = file.getBytes();
-
-        String nomeImagem = String.valueOf(file.getOriginalFilename());
-        String caminho = salvar(this.diretorioImagens, file, nomeImagem);
-        Imagem img = new Imagem(nomeImagem, caminho, bytes);
-        img.setArquivo(bytes);
-
-        return imgRepository.saveAndFlush(img);
-
-    }
-
-    public Imagem findPorId(Long id) {
-        return imgRepository.findById(id).orElse(null);
-    }
-
-    public String remover(Long id) throws IOException {
+    public void remover(Long id) throws IOException {
 
         Imagem img = imgRepository.findById(id).get();
 
         File arquivoImg = new File(img.getCaminho());
         Files.delete(Paths.get(arquivoImg.getAbsolutePath()));
         imgRepository.delete(img);
-
-        return "Imagem excluida!";
 
     }
 

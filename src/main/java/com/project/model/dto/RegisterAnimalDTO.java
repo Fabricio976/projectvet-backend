@@ -10,4 +10,3 @@ public record RegisterAnimalDTO(
      String responsible,
      ServicePet servicePet) {
 }
-    
