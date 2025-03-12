@@ -4,18 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.project.model.dto.RegisterAnimalDTO;
 import com.project.model.entitys.Animal;
@@ -82,7 +76,7 @@ public class AnimalController {
      * @return O animal correspondente ao RG fornecido.
      */
     @GetMapping("/animalRg/{rg}")
-    public Animal getAnimaisByUserCpf(@PathVariable int rg) {
+    public Animal getAnimaisByRg(@PathVariable int rg) {
         return animalService.findByRg(rg);
     }
 
@@ -125,5 +119,40 @@ public class AnimalController {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Animal excluído com sucesso!");
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/searchBarra")
+    public List<Animal> searchAnimals(@RequestParam("query") String query, Authentication auth) {
+        String userId = auth.getPrincipal().toString();
+        String role = auth.getAuthorities().iterator().next().getAuthority();
+
+        String normalizedQuery = query.trim().toLowerCase();
+        List<Animal> results;
+        if (role.equals("MANAGER")) {
+            results = animalRepository.findAll().stream()
+                    .filter(animal -> matchesQuery(animal, normalizedQuery))
+                    .collect(Collectors.toList());
+        } else {
+            results = animalRepository.findByResponsibleId(userId).stream()
+                    .filter(animal -> matchesQuery(animal, normalizedQuery))
+                    .collect(Collectors.toList());
+        }
+
+        return results;
+    }
+
+    private boolean matchesQuery(Animal animal, String query) {
+        if (String.valueOf(animal.getRg()).contains(query)) {
+            return true;
+        }
+        if (animal.getResponsible() != null && animal.getResponsible().getCpf() != null
+                && animal.getResponsible().getCpf().contains(query)) {
+            return true;
+        }
+        if (animal.getName() != null && animal.getName().toLowerCase().contains(query)) {
+            return true;
+        }
+        return animal.getResponsible() != null && animal.getResponsible().getEmail() != null
+                && animal.getResponsible().getEmail().toLowerCase().contains(query);
     }
 }

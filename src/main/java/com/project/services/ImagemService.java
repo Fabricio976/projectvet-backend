@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.project.model.entitys.Imagem;
+import com.project.model.repositorys.AnimalRepository;
 import com.project.model.repositorys.ImagemRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,18 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class ImagemService {
 
+
     @Value("${contato.disco.raiz}")
     private String raiz;
 
-    @Autowired
-    private ImagemRepository imgRepository;
+    @Value("${contato.disco.diretorio-imagens}")
+    private String diretorioImagens;
 
-    private String salvar(String diretorio, MultipartFile arquivo, String nomeImagem) {
-        Path diretorioImagemPath = Paths.get(this.raiz, diretorio);
+    @Autowired
+    private ImagemRepository imagemRepository;
+
+    public String salvar(MultipartFile arquivo, String nomeImagem) {
+        Path diretorioImagemPath = Paths.get(raiz, diretorioImagens);
         Path arquivoPath = diretorioImagemPath.resolve(arquivo.getOriginalFilename());
 
         int cont = 1;
@@ -37,27 +42,29 @@ public class ImagemService {
             nomeBase = nomeImagem.substring(0, lastDot);
             extensao = nomeImagem.substring(lastDot);
         }
+
         while (Files.exists(arquivoPath)) {
             nomeImagem = nomeBase + "_" + cont + extensao;
             arquivoPath = diretorioImagemPath.resolve(nomeImagem);
             cont++;
         }
+
         try {
             Files.createDirectories(diretorioImagemPath);
             arquivo.transferTo(arquivoPath.toFile());
-            return arquivoPath.toString();
+            return "/images/view/" + nomeImagem;
         } catch (IOException e) {
-            throw new RuntimeException("Problemas na tentativa de salvar o arquivo");
+            throw new RuntimeException("Erro ao salvar a imagem", e);
         }
     }
 
     public void remover(Long id) throws IOException {
 
-        Imagem img = imgRepository.findById(id).get();
+        Imagem img = imagemRepository.findById(id).get();
 
         File arquivoImg = new File(img.getCaminho());
         Files.delete(Paths.get(arquivoImg.getAbsolutePath()));
-        imgRepository.delete(img);
+        imagemRepository.delete(img);
 
     }
 

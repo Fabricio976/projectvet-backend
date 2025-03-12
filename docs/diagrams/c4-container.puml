@@ -1,0 +1,31 @@
+@startuml VeterinarySystemC4
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+
+!include DEVICONS/angular.puml
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/lock.puml
+
+' Elementos do diagrama
+Person(cliente, "Cliente", "Dono de animais que usa o sistema", $sprite="users")
+
+System_Boundary(s1, "Sistema Veterinário", $link="https://example.com/vet-system") {
+    Container(web, "Aplicação Web", "Angular", "Interface para login, cadastro de animais e consulta de ficha", $sprite="angular")
+    Container(api, "API Veterinária", "Java, Spring", "Gerencia autenticação, dados e lógica de negócios", $sprite="java")
+    ContainerDb(db, "Banco de Dados", "PostgreSQL", "Armazena clientes, animais, consultas e produtos")
+    Container(auth, "Autenticação", "OAuth2", "Controla login e permissões", $sprite="lock")
+}
+
+' Relacionamentos
+Rel(cliente, web, "Acessa", "https")
+Rel(web, auth, "Autentica usuário")
+Rel(web, api, "Realiza operações")
+BiRel_R(api, db, "Lê/Escreve")
+Rel(auth, api, "Valida tokens")
+
+' Legenda
+SHOW_FLOATING_LEGEND()
+
+@enduml
