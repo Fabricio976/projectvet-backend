@@ -78,7 +78,6 @@ public class AuthenticationController {
     public ResponseEntity<Map<String, String>> verifyCode(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String code = request.get("codeRecoveryPassword");
-        System.out.println("Verificando - Email: " + email + ", Código: " + code);
         Usuario user = (Usuario) userRepository.findByEmailAndCodeRecoveryPassword(email, code);
         Map<String, String> response = new HashMap<>();
         if (user != null) {

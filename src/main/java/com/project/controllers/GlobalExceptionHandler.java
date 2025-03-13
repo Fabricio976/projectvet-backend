@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
      * @return Resposta HTTP com status 404 (Not Found).
      */
     @ExceptionHandler(EmailNotFoundException.class)
-    public ResponseEntity<String> handleEmailNotFoundException(EmailNotFoundException ex) {
+    public ResponseEntity<String> emailNotFoundException(EmailNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
      * @return Retorna uma resposta com o código 400 (Bad Request)
      */
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<String> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+        public ResponseEntity<String> emailAlreadyExists(EmailAlreadyExistsException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
      * @return Resposta HTTP com status 404 (Not Found).
      */
     @ExceptionHandler(CpfNotFoundException.class)
-    public ResponseEntity<String> handleCpfNotFoundException(CpfNotFoundException ex) {
+    public ResponseEntity<String> cpfNotFoundException(CpfNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
      * @return Resposta HTTP com status 404 (Not Found).
      */
     @ExceptionHandler(RgNotFoundException.class)
-    public ResponseEntity<String> handleRgNotFoundException(RgNotFoundException ex) {
+        public ResponseEntity<String> rgNotFoundException(RgNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
      * @return Resposta HTTP com status 403 (Forbidden).
      */
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<String> handleInvalidCredentialsException(InvalidCredentialsException e) {
+    public ResponseEntity<String> invalidCredentialsException(InvalidCredentialsException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
      * @return Resposta HTTP com status 404 (Not Found).
      */
     @ExceptionHandler(AnimalNotFoundException.class)
-    public ResponseEntity<String> animalNotFoundException(AnimalNotFoundException e) {
+    public ResponseEntity<String> notFoundException(AnimalNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

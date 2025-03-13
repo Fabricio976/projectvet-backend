@@ -47,7 +47,7 @@ public class AnimalController {
             // Funcionários veem todos os animais
             return animalService.searchAllAnimals();
         } else {
-            // Clientes veem apenas seus animais
+            // Clientes veem apenas os animais do cliente
             return animalService.searchAllAnimalsByUser(String.valueOf(userId));
         }
 
@@ -140,7 +140,11 @@ public class AnimalController {
 
         return results;
     }
-
+/**
+ * Método auxiliar para verificar se um animal corresponde ao termo de pesquisa.
+ * @param query O termo de pesquisa a ser comparado.
+ * @return true se o animal corresponder à query, caso contrário false.
+ */
     private boolean matchesQuery(Animal animal, String query) {
         if (String.valueOf(animal.getRg()).contains(query)) {
             return true;

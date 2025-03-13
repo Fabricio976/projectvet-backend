@@ -1,0 +1,105 @@
+@startuml
+
+    class Usuario {
+        -String id
+        -String name
+        -String email
+        -String password
+        -String cpf
+        -Role role
+        -String address
+        -String phone
+        -List<Animal> animaisResponsavel
+    }
+
+    class Animal {
+        -String id
+        -String name
+        -int rg
+        -int age
+        -String race
+        -String specie
+        -Usuario responsible
+        -ServicePet servicePet
+    }
+
+
+
+    interface  UsuarioRepository <<interface>> {
+        +findById(id: Long): Usuario
+        +findAll(): List<Usuario>
+        +save(usuario: Usuario): Usuario
+        +deleteById(id: Long): void
+    }
+
+interface AnimalRepository <<interface>> {
+    +findById(id: Long): Animal
+    +findAll(): List<Animal>
+    +save(animal: Animal): Animal
+    +deleteById(id: Long): void
+    +findByUserId(userId: Long): List<Animal>
+}
+
+
+
+    class AnimalService {
+        +todosAnimaisDoUsuario() : List<Animal>
+        +todosOsAnimais(): List<Animal>
+        +procurarRgAnimal(int: rg) : Animal
+        +registerAnimal(animal: Animal): Animal
+        +editAnimal(id: Long, animal: Animal): Animal
+        +deleteAnimal(id: Long): void
+    }
+
+    class UsuarioService {
+        +registerCliente(usuario: Usuario): Usuario
+        +registerManager(usuario: Usuario): Usuario
+    }
+
+
+
+    class UsuarioDTO <<DTO>>{
+         +String name
+         +String email
+         +String password
+         +String cpf
+         +Role role
+         +String address
+         +String phone
+    }
+
+    class AnimalDTO <<DTO>> {
+        +String name
+        +int age
+        +String race
+        +String specie
+        +String responsible
+        +ServicePet servicePet
+    }
+
+    enum Role{
+        +CLIENTE
+        +FUNCIONARIO
+    }
+
+    enum ServicePet{
+        +PETSHOIP
+        +CLINICAVETERINARIA
+        +PETCLINICA
+    }
+
+
+Usuario "1" *-- "0..*" Animal : "Responsavel"
+UsuarioService .. UsuarioRepository
+UsuarioService .. UsuarioDTO
+AnimalService .. AnimalRepository
+AnimalService .. AnimalDTO
+UsuarioDTO -- Usuario
+AnimalDTO -- Animal
+AnimalService -- Animal
+Role -- Usuario
+ServicePet -- Animal
+
+
+
+@enduml
