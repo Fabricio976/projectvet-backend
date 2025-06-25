@@ -1,5 +1,5 @@
 🐾 API - Sistema de Cadastro de Animais para Hospital Veterinário
-Esta API foi desenvolvida para gerenciar o cadastro de animais em um hospital veterinário, incluindo funcionalidades de autenticação, 
+Esta API foi desenvolvida para gerenciar o cadastro de animais em um hospital veterinário/Petshop, incluindo funcionalidades de autenticação, 
 autorização e recuperação de senha. O sistema diferencia clientes (tutores de animais) de funcionários (usuários internos), garantindo controle de acesso adequado a cada perfil.
 
 🚀 Funcionalidades
@@ -42,3 +42,4 @@ Testes de API: Rest Assured + JUnit
 
 ✅ Futuras melhorias
 Integração com módulo de agendamento de consultas
+Integração de um e-commerce (produtos para os animais)
