@@ -28,6 +28,7 @@ Persistência: Spring Data JPA
 Banco de Dados: PostgreSQL
 Envio de E-mails: JavaMailSender
 Validação: Bean Validation (javax.validation)
+Padrão de projeto: MVC
 
 ✅ Testes Automatizados
 Testes de endpoints REST usando Rest Assured
