@@ -53,8 +53,8 @@ public class AnimalService {
      * @return Mensagem de confirmação do registro.
      * @throws CpfNotFoundException Se o usuário responsável não for encontrado.
      */
-    public String registerAnimal(String id, RegisterAnimalDTO animalDTO) {
-        Usuario usuario = userRepository.findById(id)
+    public String registerAnimal(String cpf, RegisterAnimalDTO animalDTO) {
+        Usuario usuario = userRepository.findByCpf(cpf)
                 .orElseThrow(() -> new CpfNotFoundException("Usuário não encontrado!"));
         Animal animal = new Animal();
         animal.setResponsible(usuario);
