@@ -12,17 +12,16 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Appointment {
-
+// Ficha
+public class ClinicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date appointmentDate;
+    private Date consultationDate;
 
-    @Enumerated(EnumType.STRING)
-    private ServicePet servicePet;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")

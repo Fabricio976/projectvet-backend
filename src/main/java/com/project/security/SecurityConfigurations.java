@@ -44,13 +44,15 @@ public class SecurityConfigurations {
                         .requestMatchers("/images/**").permitAll()
 
                         // ROTAS RESTRITAS A MANAGER
-                        .requestMatchers(HttpMethod.POST, "/projectvet/register/funcionario").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/projectvet/animal/**").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.PUT, "/projectvet/animal/**").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.DELETE, "/projectvet/animal/**").hasRole("MANAGER")
-
+                        .requestMatchers(HttpMethod.GET, "/projectvet/clinical-records/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/projectvet/register/manager").authenticated()
                         .requestMatchers(HttpMethod.GET, "/projectvet/animal/**").authenticated()
+
+                        .requestMatchers( "/projectvet/animal/**").hasRole("MANAGER")
+                        .requestMatchers("/projectvet/register/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/projectvet/clinical-records").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.POST, "/projectvet/appointments/**").hasRole("CLIENT")
+
 
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

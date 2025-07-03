@@ -2,6 +2,7 @@ package com.project.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import com.project.model.exeptions.EmailAlreadyExistsException;
 import com.project.model.exeptions.EmailNotFoundException;
@@ -18,7 +19,6 @@ import com.project.model.entitys.Usuario;
 import com.project.model.entitys.enums.Role;
 import com.project.model.exeptions.RgNotFoundException;
 import com.project.model.repositorys.UserRepository;
-
 @Service
 @Transactional
 public class UsuarioService {
@@ -33,8 +33,10 @@ public class UsuarioService {
         checkIfEmailExists(data.email());
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        Usuario newUser = new Usuario(data.name(), data.email(), encryptedPassword, data.cpf(),
-                Role.CLIENT, data.address(), data.phone());
+        Usuario newUser = new Usuario(
+                data.name(), data.email(), encryptedPassword,
+                data.cpf(), Role.CLIENT, data.address(), data.phone()
+        );
         return userRepository.save(newUser);
     }
 
@@ -42,41 +44,36 @@ public class UsuarioService {
         checkIfEmailExists(data.email());
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        Usuario newUser = new Usuario(data.name(), data.email(), encryptedPassword, data.cpf(),
-                Role.MANAGER, data.address(), data.phone());
+        Usuario newUser = new Usuario(
+                data.name(), data.email(), encryptedPassword,
+                data.cpf(), Role.MANAGER, data.address(), data.phone()
+        );
         return userRepository.save(newUser);
     }
 
     public String requestRecoveryCode(String email) {
-        UserDetails foundUser = userRepository.findByEmail(email);
-        if (foundUser == null) {
-            throw new EmailNotFoundException("Email não encontrado: " + email);
-        }
-        return managerUser.solicitarCodigo(email);
+        return Optional.ofNullable(userRepository.findByEmail(email))
+                .map(user -> managerUser.solicitarCodigo(email))
+                .orElseThrow(() -> new EmailNotFoundException("Email não encontrado: " + email));
     }
 
     public void changePassword(Usuario usuario) {
-        String result = managerUser.alterarSenha(usuario);
-        if (!"Senha alterada com sucesso!".equals(result)) {
-            throw new RuntimeException(result); // pode ser substituída por uma exceção customizada
-        }
+        Optional.of(managerUser.alterarSenha(usuario))
+                .filter(msg -> msg.equals("Senha alterada com sucesso!"))
+                .orElseThrow(() -> new RuntimeException("Erro ao alterar a senha"));
     }
 
     public void checkCode(String email, String code) {
-        Usuario user = (Usuario) userRepository.findByEmailAndCodeRecoveryPassword(email, code);
-        if (user == null) {
-            throw new InvalidRecoveryCodeException("Código inválido");
-        }
+        Usuario user = (Usuario) Optional.ofNullable(userRepository.findByEmailAndCodeRecoveryPassword(email, code))
+                .orElseThrow(() -> new InvalidRecoveryCodeException("Código inválido"));
 
-        long segundos = (new Date().getTime() - user.getDateShippingCodigo().getTime()) / 1000;
-        if (segundos > 900) {
-            throw new InvalidRecoveryCodeException("Código expirado");
-        }
+        Optional.ofNullable(user.getDateShippingCodigo())
+                .filter(data -> (new Date().getTime() - data.getTime()) / 1000 <= 900)
+                .orElseThrow(() -> new InvalidRecoveryCodeException("Código expirado"));
     }
 
     private void checkIfEmailExists(String email) {
-        if (userRepository.findByEmail(email) != null) {
-            throw new EmailAlreadyExistsException("Email já cadastrado!");
-        }
+        Optional.ofNullable(userRepository.findByEmail(email))
+                .ifPresent(user -> { throw new EmailAlreadyExistsException("Email já cadastrado!"); });
     }
 }

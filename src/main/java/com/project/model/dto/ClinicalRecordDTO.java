@@ -4,10 +4,9 @@ import com.project.model.entitys.enums.ServicePet;
 
 import java.util.Date;
 
-public record AppointmentRequestDTO(
-        Date appointmentDate,
+public record ClinicalRecordDTO(
+        Date consultationDate,
         String description,
-        String animalId,
-        ServicePet servicePet
+        String animalId
 ) {
 }

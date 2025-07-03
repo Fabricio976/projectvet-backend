@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     /**
-     * Essa exceção é lançada quando um email não é encontrado.
-     *
      * @return Resposta HTTP com status 404 (Not Found).
      */
     @ExceptionHandler(EmailNotFoundException.class)
@@ -25,8 +23,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Essa exceção é lançada quando tenta cadastrar dois emails iguais.
-     *
      * @return Retorna uma resposta com o código 400 (Bad Request)
      */
     @ExceptionHandler(EmailAlreadyExistsException.class)
@@ -35,8 +31,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Essa exceção é lançada quando o CPF fornecido não é encontrado.
-     *
      * @return Resposta HTTP com status 404 (Not Found).
      */
     @ExceptionHandler(CpfNotFoundException.class)
@@ -45,8 +39,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Essa exceção é lançada quando o RG fornecido não é encontrado.
-     *
      * @return Resposta HTTP com status 404 (Not Found).
      */
     @ExceptionHandler(RgNotFoundException.class)
@@ -55,8 +47,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Essa exceção é lançada quando o Usuario esta com a senha errada.
-     *
      * @return Resposta HTTP com status 403 (Forbidden).
      */
     @ExceptionHandler(InvalidCredentialsException.class)
@@ -65,8 +55,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Essa exceção é lançada quando o ID do animaal fornecido não é encontrado
-     *
      * @return Resposta HTTP com status 404 (Not Found).
      */
     @ExceptionHandler(AnimalNotFoundException.class)
@@ -77,11 +65,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidRecoveryCodeException.class)
     public ResponseEntity<String> invalidCode(InvalidRecoveryCodeException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
-    }
-
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<String> invalidCredentials(InvalidCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 
     @ExceptionHandler(InvalidAnimalAccessException.class)

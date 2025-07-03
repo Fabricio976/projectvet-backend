@@ -29,7 +29,8 @@ public class Animal {
     private int age;
     private String race;
     private String specie;
-    private Appointment appointment;
+
+
 
     private String photoUrl;
 

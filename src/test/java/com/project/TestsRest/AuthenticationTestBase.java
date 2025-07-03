@@ -39,7 +39,7 @@ public class AuthenticationTestBase {
                 "test_pedroluiz@example.com",
                 "password123",
                 "980172398",
-                Role.MANAGER,
+                Role.ROLE_MANAGER,
                 "123 Casa Grande",
                 "1234567890");
 
@@ -76,7 +76,7 @@ public class AuthenticationTestBase {
                 generateUniqueEmail("test_fabricio"),
                 "password123",
                 "12345678901",
-                Role.CLIENT,
+                Role.ROLE_CLIENT,
                 "123 Casa Grande",
                 "1234567890");
 
@@ -90,7 +90,7 @@ public class AuthenticationTestBase {
                 generateUniqueEmail("test_joaomaria"),
                 "password123",
                 "32145678901",
-                Role.MANAGER,
+                Role.ROLE_MANAGER,
                 "123 Main St",
                 "4324567890");
 
@@ -105,7 +105,7 @@ public class AuthenticationTestBase {
                 email,
                 "password123",
                 "12345678901",
-                Role.CLIENT,
+                Role.ROLE_CLIENT,
                 "123 Casa Grandee",
                 "1234567890");
 
@@ -128,7 +128,7 @@ public class AuthenticationTestBase {
                 email,
                 "password123",
                 "12345678901",
-                Role.CLIENT,
+                Role.ROLE_CLIENT,
                 "123 Casa Grande",
                 "1234567890");
 
@@ -155,7 +155,7 @@ public class AuthenticationTestBase {
                 email,
                 "password123",
                 "32145678901",
-                Role.MANAGER,
+                Role.ROLE_MANAGER,
                 "123 Main St",
                 "4324567890");
 

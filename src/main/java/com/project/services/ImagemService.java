@@ -1,6 +1,5 @@
 package com.project.services;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.project.model.entitys.Imagem;
-import com.project.model.repositorys.AnimalRepository;
 import com.project.model.repositorys.ImagemRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ImagemService {
-
 
     @Value("${contato.disco.raiz}")
     private String raiz;
@@ -33,7 +30,6 @@ public class ImagemService {
         Path diretorioImagemPath = Paths.get(raiz, diretorioImagens);
         Path arquivoPath = diretorioImagemPath.resolve(arquivo.getOriginalFilename());
 
-        int cont = 1;
         String nomeBase = nomeImagem;
         String extensao = "";
 
@@ -43,10 +39,10 @@ public class ImagemService {
             extensao = nomeImagem.substring(lastDot);
         }
 
+        int cont = 1;
         while (Files.exists(arquivoPath)) {
-            nomeImagem = nomeBase + "_" + cont + extensao;
+            nomeImagem = nomeBase + "_" + cont++ + extensao;
             arquivoPath = diretorioImagemPath.resolve(nomeImagem);
-            cont++;
         }
 
         try {
@@ -58,14 +54,17 @@ public class ImagemService {
         }
     }
 
-    public void remover(Long id) throws IOException {
-
-        Imagem img = imagemRepository.findById(id).get();
-
-        File arquivoImg = new File(img.getCaminho());
-        Files.delete(Paths.get(arquivoImg.getAbsolutePath()));
-        imagemRepository.delete(img);
-
+    public void remover(Long id) {
+        imagemRepository.findById(id).ifPresentOrElse(img -> {
+            try {
+                Path path = Paths.get(new File(img.getCaminho()).getAbsolutePath());
+                Files.deleteIfExists(path);
+                imagemRepository.delete(img);
+            } catch (IOException e) {
+                throw new RuntimeException("Erro ao deletar a imagem do sistema de arquivos", e);
+            }
+        }, () -> {
+            throw new RuntimeException("Imagem não encontrada com ID: " + id);
+        });
     }
-
 }
