@@ -46,7 +46,8 @@ public class AnimalService {
                 .orElseThrow(() -> new RgNotFoundException("Não existe animal cadastrado com esse RG: " + rg));
     }
 
-    public String registerAnimal(String cpf, RegisterAnimalDTO animalDTO) {
+    public String registerAnimal(RegisterAnimalDTO animalDTO) {
+        String cpf = animalDTO.responsible();
         Usuario usuario = Optional.ofNullable(userRepository.findByCpf(cpf))
                 .orElseThrow(() -> new CpfNotFoundException("CPF não encontrado"));
 

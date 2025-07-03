@@ -32,8 +32,17 @@ public class AnimalController {
     @GetMapping("/searchAll")
     public List<Animal> searchAllanimals(Authentication auth) {
         String userId = auth.getPrincipal().toString();
-        String role = auth.getAuthorities().iterator().next().getAuthority();
-        return animalService.searchAllAnimalsByUser(userId, Role.valueOf(role));
+
+        Optional<String> roleOpt = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(r -> r.startsWith("ROLE_"))
+                .map(r -> r.replace("ROLE_", ""))
+                .findFirst();
+
+        Role role = roleOpt.map(Role::valueOf)
+                .orElseThrow(() -> new RuntimeException("Role inválida no token"));
+
+        return animalService.searchAllAnimalsByUser(userId, role);
     }
 
     @GetMapping("/search/{id}")
@@ -54,11 +63,9 @@ public class AnimalController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> registerAnimal(
-            @RequestBody @Valid RegisterAnimalDTO dataAnimal,
-            Authentication auth) {
-        String message = animalService.registerAnimal(auth.getPrincipal().toString(), dataAnimal);
-        return response(message);
+    public ResponseEntity<?> registerAnimal(@RequestBody @Valid RegisterAnimalDTO data) {
+        String result = animalService.registerAnimal(data);
+        return ResponseEntity.ok().body(Map.of("message", result));
     }
 
     @PutMapping("/editAnimal/{id}")

@@ -58,7 +58,6 @@ public class AuthenticationController {
             Usuario usuario = (Usuario) auth.getPrincipal();
             String token = tokenService.generateToken(usuario);
 
-            System.out.println("Authorities: " + auth.getAuthorities());
             return ResponseEntity.ok(new LoginResponseDTO(token, usuario.getId(), usuario.getName()));
         } catch (BadCredentialsException e) {
             throw new InvalidCredentialsException("Email ou senha incorretos");

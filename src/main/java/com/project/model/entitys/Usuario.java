@@ -78,9 +78,11 @@ public class Usuario implements UserDetails {
     public String getPassword() {
         return password;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.getRole().toUpperCase()));
+        String springRole = "ROLE_" + role.getRole().toUpperCase();
+        return List.of(new SimpleGrantedAuthority(springRole));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.project.model.dto;
 
-import com.project.model.entitys.Imagem;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.model.entitys.enums.ServicePet;
 
 public record RegisterAnimalDTO(
@@ -8,7 +8,7 @@ public record RegisterAnimalDTO(
         int age,
         String race,
         String specie,
-        String cpf,
+        String responsible,
         String photoUrl,
         ServicePet servicePet
 ) { }

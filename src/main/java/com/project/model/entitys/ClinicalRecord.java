@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 // Ficha
-public class ClinicalRecord {
+public class  ClinicalRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -22,10 +22,6 @@ public class ClinicalRecord {
     private Date consultationDate;
 
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario user;
 
     @ManyToOne
     @JoinColumn(name = "animal_id")
