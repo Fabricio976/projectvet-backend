@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/projectvet")
@@ -51,18 +52,18 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO data) {
-        try {
-            var auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(data.email(), data.password())
-            );
-            Usuario usuario = (Usuario) auth.getPrincipal();
-            String token = tokenService.generateToken(usuario);
-
-            return ResponseEntity.ok(new LoginResponseDTO(token, usuario.getId(), usuario.getName()));
-        } catch (BadCredentialsException e) {
-            throw new InvalidCredentialsException("Email ou senha incorretos");
-        }
+        return Optional.of(data)
+                .map(d -> new UsernamePasswordAuthenticationToken(d.email(), d.password()))
+                .map(authenticationManager::authenticate)
+                .map(auth -> {
+                    Usuario usuario = (Usuario) auth.getPrincipal();
+                    String token = tokenService.generateToken(usuario);
+                    return new LoginResponseDTO(token, usuario.getId(), usuario.getName(), auth.getAuthorities());
+                })
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new InvalidCredentialsException("Erro inesperado no login")); // fallback seguro
     }
+
 
     @PostMapping("/register/client")
     public ResponseEntity<Map<String, String>> registerClient(@RequestBody @Valid RegisterUserDTO data) {

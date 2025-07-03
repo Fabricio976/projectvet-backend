@@ -1,8 +1,8 @@
 package com.project.model.entitys.enums;
 
 public enum Role {
-    CLIENT("Client"),
-    MANAGER("Manager");
+    CLIENT("CLIENT"),
+    MANAGER("MANAGER");
 
     private final String role;
 
@@ -14,5 +14,9 @@ public enum Role {
         return role;
     }
 
-    
+    public String getAuthority() {
+        return "ROLE_" + this.name();
+    }
+
+
 }

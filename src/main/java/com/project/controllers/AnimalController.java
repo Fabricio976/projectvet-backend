@@ -30,19 +30,10 @@ public class AnimalController {
     private AnimalRepository animalRepository;
 
     @GetMapping("/searchAll")
-    public List<Animal> searchAllanimals(Authentication auth) {
+    public List<Animal> searchAllAnimals(Authentication auth) {
         String userId = auth.getPrincipal().toString();
-
-        Optional<String> roleOpt = auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(r -> r.startsWith("ROLE_"))
-                .map(r -> r.replace("ROLE_", ""))
-                .findFirst();
-
-        Role role = roleOpt.map(Role::valueOf)
-                .orElseThrow(() -> new RuntimeException("Role inválida no token"));
-
-        return animalService.searchAllAnimalsByUser(userId, role);
+        String role = auth.getAuthorities().iterator().next().getAuthority();
+        return animalService.searchAllAnimalsByUser(userId, Role.valueOf(role));
     }
 
     @GetMapping("/search/{id}")

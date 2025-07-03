@@ -19,15 +19,13 @@ public class ClinicalRecordController {
     @Autowired
     private ClinicalRecordService clinicalRecordService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('MANAGER')")
+    @PostMapping("/create")
     public ResponseEntity<Map<String, String>> create(@RequestBody @Valid ClinicalRecordDTO dto) {
         String result = clinicalRecordService.createRecord(dto);
         return ResponseEntity.ok(Map.of("message", result));
     }
 
     @GetMapping("/animal/{animalId}")
-    @PreAuthorize("hasAnyRole('MANAGER', 'CLIENT')")
     public List<ClinicalRecord> listByAnimal(@PathVariable String animalId) {
         return clinicalRecordService.listByAnimal(animalId);
     }

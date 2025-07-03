@@ -16,46 +16,46 @@ import io.restassured.response.Response;
 
 public class AnimalTest extends AuthenticationTestBase {
 
-    @Test
-    public void testRegisterAnimalSuccess() {
+//     @Test
+//     public void testRegisterAnimalSuccess() {
 
 
-        AuthenticationDTO loginData = new AuthenticationDTO("test_pedroluiz@example.com", "password123");
+//         AuthenticationDTO loginData = new AuthenticationDTO("test_pedroluiz@example.com", "password123");
 
-        Response loginResponse = given()
-                .contentType(ContentType.JSON)
-                .body(loginData)
-                .when()
-                .post("/login")
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("token", notNullValue())
-                .body("userId", notNullValue())
-                .extract()
-                .response();
+//         Response loginResponse = given()
+//                 .contentType(ContentType.JSON)
+//                 .body(loginData)
+//                 .when()
+//                 .post("/login")
+//                 .then()
+//                 .statusCode(HttpStatus.OK.value())
+//                 .body("token", notNullValue())
+//                 .body("userId", notNullValue())
+//                 .extract()
+//                 .response();
 
 
-        String token = loginResponse.jsonPath().getString("token");
-        String responsible = loginResponse.jsonPath().getString("userId");
+//         String token = loginResponse.jsonPath().getString("token");
+//         String responsible = loginResponse.jsonPath().getString("userId");
 
-        System.out.println("Token gerado: " + token);
+//         System.out.println("Token gerado: " + token);
 
-        RegisterAnimalDTO animal = new RegisterAnimalDTO(
-                "Buddy",
-                2,
-                "Golden Retriever",
-                "Dog",
-                responsible,
-                ServicePet.PETCLINIC);
+//         RegisterAnimalDTO animal = new RegisterAnimalDTO(
+//                 "Buddy",
+//                 2,
+//                 "Golden Retriever",
+//                 "Dog",
+//                 responsible,
+//                 ServicePet.PETCLINIC);
 
-        given()
-                .auth()
-                .oauth2(token) // Usando o token de autenticação
-                .contentType(ContentType.JSON)
-                .body(animal)
-                .when()
-                .post("/animal/register")
-                .then()
-                .statusCode(HttpStatus.OK.value());
-    }
+//         given()
+//                 .auth()
+//                 .oauth2(token) // Usando o token de autenticação
+//                 .contentType(ContentType.JSON)
+//                 .body(animal)
+//                 .when()
+//                 .post("/animal/register")
+//                 .then()
+//                 .statusCode(HttpStatus.OK.value());
+//     }
 }

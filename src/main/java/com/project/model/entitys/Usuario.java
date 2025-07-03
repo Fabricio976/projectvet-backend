@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -45,7 +46,7 @@ public class Usuario implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private List<Role> role;
     private String name;
     private String address;
     private String phone;
@@ -59,7 +60,7 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "responsible")
     private List<Animal> animalsResponsible = new ArrayList<>();
 
-    public Usuario(String name, String email, String password,  String cpf, Role role,  String address, String phone) {
+    public Usuario(String name, String email, String password, String cpf, List<Role> role, String address, String phone) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -81,22 +82,26 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String springRole = "ROLE_" + role.getRole().toUpperCase();
-        return List.of(new SimpleGrantedAuthority(springRole));
+        return role.stream()
+                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.name()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean isEnabled() {
         return true; // Verificar se a conta está habilitada
     }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true; // Verificar se as credenciais estão expiradas
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true; // Verificar se a conta está expirada
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true; // Verifica se a conta esta b

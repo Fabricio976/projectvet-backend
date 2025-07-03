@@ -36,7 +36,7 @@ public class AnimalService {
     }
 
     public List<Animal> searchAllAnimalsByUser(String userId, Role role) {
-        return Role.MANAGER.equals(role)
+        return "MANAGER".equals(role.name())
                 ? animalRepository.findAll()
                 : animalRepository.findByResponsibleId(userId);
     }
@@ -96,7 +96,7 @@ public class AnimalService {
         return generateRgStream()
                 .filter(rg -> !animalRepository.existsByRg(rg))
                 .findFirst()
-                .orElseThrow(); // teoricamente nunca deve falhar, mas podemos tratar se quiser
+                .orElseThrow();
     }
 
     private java.util.stream.IntStream generateRgStream() {

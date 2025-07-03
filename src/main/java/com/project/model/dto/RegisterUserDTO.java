@@ -9,5 +9,6 @@ public record RegisterUserDTO(
         String cpf,
         Role role,
         String address,
-        String phone) {
+        String phone
+) {
 }
