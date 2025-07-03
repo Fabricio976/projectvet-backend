@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import com.project.model.entitys.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +34,13 @@ public class AnimalService {
         return animalRepository.findAll();
     }
 
-    public List<Animal> searchAllAnimalsByUser(String id) {
-        return animalRepository.findByResponsibleId(id);
+    public List<Animal> searchAllAnimalsByUser(String userId, Role role) {
+        if ("MANAGER".equals(role)) {
+            return animalRepository.findAll();
+        } else {
+            return animalRepository.findByResponsibleId(userId);
+        }
     }
-
     public Animal findByRg(int rg) {
         Animal animal = animalRepository.findByRg(rg);
         if (animal == null) {
@@ -48,14 +52,16 @@ public class AnimalService {
     /**
      * Registra um novo animal no sistema.
      *
-     * @param id        ID do usuário responsável pelo animal.
+     * @param cpf       ID do usuário responsável pelo animal.
      * @param animalDTO Objeto contendo os dados do animal.
      * @return Mensagem de confirmação do registro.
      * @throws CpfNotFoundException Se o usuário responsável não for encontrado.
      */
     public String registerAnimal(String cpf, RegisterAnimalDTO animalDTO) {
-        Usuario usuario = userRepository.findByCpf(cpf)
-                .orElseThrow(() -> new CpfNotFoundException("Usuário não encontrado!"));
+        Usuario usuario = userRepository.findByCpf(cpf);
+        if (usuario == null) {
+            throw new CpfNotFoundException("CPF não encontrado ");
+        }
         Animal animal = new Animal();
         animal.setResponsible(usuario);
         animal.setName(animalDTO.name());
@@ -86,7 +92,7 @@ public class AnimalService {
         existingAnimal.setRace(animal.getRace());
         existingAnimal.setAge(animal.getAge());
         existingAnimal.setServicePet(animal.getServicePet());
-        responsible.setNome(animal.getResponsible().getNome());
+        responsible.setName(animal.getResponsible().getName());
         userRepository.save(responsible);
 
         animalRepository.saveAndFlush(existingAnimal);

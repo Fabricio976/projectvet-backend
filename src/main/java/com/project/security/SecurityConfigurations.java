@@ -32,11 +32,26 @@ public class SecurityConfigurations {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/projectvet/**").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/projectvet/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/projectvet/register/funcionario").hasRole("MANAGER")
+                .authorizeHttpRequests(auth -> auth
+
+                        // ROTAS PÚBLICAS
+                        .requestMatchers(HttpMethod.POST, "/projectvet/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/projectvet/register/client").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/projectvet/code-forgot").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/projectvet/verify-code").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/projectvet/change-password").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
+
+                        // ROTAS RESTRITAS A MANAGER
+                        .requestMatchers(HttpMethod.POST, "/projectvet/register/funcionario").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/projectvet/animal/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/projectvet/animal/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/projectvet/animal/**").hasRole("MANAGER")
+
+                        .requestMatchers(HttpMethod.GET, "/projectvet/animal/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/projectvet/appointments/**").hasRole("CLIENT")
+
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -54,19 +69,14 @@ public class SecurityConfigurations {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:4200");
-        configuration.addAllowedMethod("GET");
-        configuration.addAllowedMethod("POST");
-        configuration.addAllowedMethod("PUT");
-        configuration.addAllowedMethod("DELETE");
-        configuration.addAllowedMethod("OPTIONS");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("http://localhost:4200");
+        config.setAllowCredentials(true);
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/projectvet/**", configuration);
-        source.registerCorsConfiguration("/images/**", configuration);
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }

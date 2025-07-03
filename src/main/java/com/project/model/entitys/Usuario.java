@@ -46,7 +46,7 @@ public class Usuario implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    private String nome;
+    private String name;
     private String address;
     private String phone;
 
@@ -59,8 +59,8 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "responsible")
     private List<Animal> animalsResponsible = new ArrayList<>();
 
-    public Usuario(String nome, String email, String password,  String cpf, Role role,  String address, String phone) {
-        this.nome = nome;
+    public Usuario(String name, String email, String password,  String cpf, Role role,  String address, String phone) {
+        this.name = name;
         this.email = email;
         this.password = password;
         this.cpf = cpf;
@@ -71,7 +71,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return nome;
+        return name;
     }
 
     @Override

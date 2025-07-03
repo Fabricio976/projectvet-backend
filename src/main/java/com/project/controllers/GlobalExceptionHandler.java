@@ -73,4 +73,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> notFoundException(AnimalNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+
+    @ExceptionHandler(InvalidRecoveryCodeException.class)
+    public ResponseEntity<String> invalidCode(InvalidRecoveryCodeException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<String> invalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidAnimalAccessException.class)
+    public ResponseEntity<String> invalidAccess(InvalidAnimalAccessException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
 }

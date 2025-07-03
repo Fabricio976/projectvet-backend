@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.project.model.entitys.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -42,15 +43,7 @@ public class AnimalController {
     public List<Animal> searchAllanimals(Authentication auth) {
         String userId = auth.getPrincipal().toString();
         String role = auth.getAuthorities().iterator().next().getAuthority();
-
-        if (role.equals("MANAGER")) {
-            // Funcionários veem todos os animais
-            return animalService.searchAllAnimals();
-        } else {
-            // Clientes veem apenas os animais do cliente
-            return animalService.searchAllAnimalsByUser(String.valueOf(userId));
-        }
-
+        return animalService.searchAllAnimalsByUser(userId, Role.valueOf(role));
     }
 
     @GetMapping("/search/{id}")
