@@ -73,8 +73,8 @@ public class Usuario implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(r -> new SimpleGrantedAuthority(getName()))
-                .collect(Collectors.toList());
+                .map(r -> new SimpleGrantedAuthority(r.getName().name()))
+                .toList();
     }
 
     @Override

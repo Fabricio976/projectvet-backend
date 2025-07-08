@@ -4,7 +4,7 @@ import com.project.model.entitys.Role;
 
 import java.util.List;
 
-public record RecoveryUserDto(
+public record RecoveryUserDTO(
         Long id,
         String email,
         List<Role> roles

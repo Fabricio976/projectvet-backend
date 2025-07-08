@@ -6,10 +6,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.project.model.entitys.Role;
+import com.project.model.entitys.Usuario;
 import com.project.model.entitys.enums.RoleName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.project.model.dto.RegisterAnimalDTO;
@@ -29,12 +32,18 @@ public class AnimalController {
     @Autowired
     private AnimalRepository animalRepository;
 
+
     @GetMapping("/searchAll")
     public List<Animal> searchAllAnimals(Authentication auth) {
-        String userId = auth.getPrincipal().toString();
-        String role = auth.getAuthorities().iterator().next().getAuthority();
-        return animalService.searchAllAnimalsByUser(userId, RoleName.valueOf(role));
+        Jwt jwt = (Jwt) auth.getPrincipal();
+        String userId = jwt.getClaimAsString("sub"); // Substitua "sub" pelo claim correto, se necessário
+        boolean isManager = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("MANAGER"));
+        System.out.println("userId: " + userId);
+        System.out.println("isManager: " + isManager);
+        return animalService.searchAllAnimalsByUser(userId, isManager);
     }
+
 
     @GetMapping("/search/{id}")
     public ResponseEntity<Animal> searchById(@PathVariable String id) {
@@ -75,7 +84,7 @@ public class AnimalController {
         return response("Animal excluído com sucesso!");
     }
 
-    @GetMapping("/searchBarra")
+ /*   @GetMapping("/searchBarra")
     public List<Animal> searchAnimals(@RequestParam("query") String query, Authentication auth) {
         String userId = auth.getPrincipal().toString();
         String role = auth.getAuthorities().iterator().next().getAuthority();
@@ -100,7 +109,7 @@ public class AnimalController {
                                 .toLowerCase()
                 ).anyMatch(value -> value.contains(query)))
                 .orElse(false);
-    }
+    }*/
 
     private ResponseEntity<Map<String, String>> response(String message) {
         return ResponseEntity.ok(Map.of("message", message));

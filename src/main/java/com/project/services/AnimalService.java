@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import com.project.model.entitys.Role;
 import com.project.model.entitys.enums.RoleName;
 import com.project.model.dto.RegisterAnimalDTO;
 import com.project.model.entitys.Animal;
@@ -35,8 +36,8 @@ public class AnimalService {
         return animalRepository.findAll();
     }
 
-    public List<Animal> searchAllAnimalsByUser(String userId, RoleName role) {
-        return "MANAGER".equals(role.name())
+    public List<Animal> searchAllAnimalsByUser(String userId, boolean isManager) {
+        return isManager
                 ? animalRepository.findAll()
                 : animalRepository.findByResponsibleId(userId);
     }
@@ -51,16 +52,17 @@ public class AnimalService {
         Usuario usuario = Optional.ofNullable(userRepository.findByCpf(cpf))
                 .orElseThrow(() -> new CpfNotFoundException("CPF não encontrado"));
 
-        Animal animal = new Animal();
-        animal.setResponsible(usuario);
-        animal.setName(animalDTO.name());
-        animal.setAge(animalDTO.age());
-        animal.setRace(animalDTO.race());
-        animal.setSpecie(animalDTO.specie());
-        animal.setPhotoUrl(animalDTO.photoUrl() != null ? animalDTO.photoUrl() : "");
-        animal.setServicePet(animalDTO.servicePet());
-        animal.setDateRegister(new Date());
-        animal.setRg(generateUniqueRg());
+        Animal animal = Animal.builder()
+                .responsible(usuario)
+                .name(animalDTO.name())
+                .age(animalDTO.age())
+                .race(animalDTO.race())
+                .specie(animalDTO.specie())
+                .photoUrl(animalDTO.photoUrl() != null ? animalDTO.photoUrl() : "")
+                .servicePet(animalDTO.servicePet())
+                .dateRegister(new Date())
+                .rg(generateUniqueRg())
+                .build();
 
         animalRepository.save(animal);
         return "Animal Registrado!";

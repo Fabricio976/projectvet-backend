@@ -42,6 +42,7 @@ public class SecurityConfigurations {
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/projectvet/login",
             "/projectvet/register/manager",
+            "/projectvet/register/client",
             "/projectvet/code-forgot",
             "/projectvet/verify-code",
             "/projectvet/change-password"
@@ -49,17 +50,18 @@ public class SecurityConfigurations {
 
     // Requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
-            "/projectvet/clinical-records/**",
-            "/projectvet/animal/**",
+            "/projectvet/animal/search",
+            "/projectvet/animal/searchAll",
+            "/projectvet/animal/editAnimal",
             "/images/**"
     };
 
-    // Só podem ser acessador por usuários com permissão de cliente
+    // Só podem ser acessador por usuários cliente
     public static final String[] ENDPOINTS_CUSTOMER = {
             "/projectvet/appointments/**"
     };
 
-    // Só podem ser acessador por usuários com permissão de administrador
+    // Só podem ser acessador por usuários administradores
     public static final String[] ENDPOINTS_ADMIN = {
             "/projectvet/animal/**",
             "/projectvet/register/**",
@@ -84,7 +86,7 @@ public class SecurityConfigurations {
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
                         .requestMatchers(ENDPOINTS_ADMIN).hasRole("MANAGER")
                         .requestMatchers(ENDPOINTS_CUSTOMER).hasRole("CLIENT")
-                        .anyRequest().authenticated())
+                        .anyRequest().denyAll())
 
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
