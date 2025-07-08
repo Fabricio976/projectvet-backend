@@ -1,13 +1,13 @@
 package com.project.model.dto;
 
-import com.project.model.entitys.enums.Role;
+import com.project.model.entitys.enums.RoleName;
 
 public record RegisterUserDTO(
         String name,
         String email,
         String password,
         String cpf,
-        Role role,
+        RoleName role,
         String address,
         String phone
 ) {

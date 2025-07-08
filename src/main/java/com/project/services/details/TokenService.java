@@ -1,12 +1,12 @@
 package com.project.services.details;
-import com.project.model.entitys.enums.Role;
+
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.project.model.entitys.enums.RoleName;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.project.model.entitys.Usuario;
 
 import java.time.Instant;
@@ -23,21 +23,16 @@ public class TokenService {
     private String secret;
 
     public String generateToken(Usuario user) {
-        return createAlgorithm()
-                .map(algorithm -> {
-                    // Transforma as roles em authorities com "ROLE_"
-                    List<String> authorities = user.getRole().stream()
-                            .map(Role::getAuthority) // ex: "ROLE_MANAGER"
-                            .collect(Collectors.toList());
-
-                    return JWT.create()
-                            .withIssuer("projectvet")
-                            .withSubject(user.getId())
-                            .withClaim("authorities", authorities)
-                            .withExpiresAt(genExpirationDate())
-                            .sign(algorithm);
-                })
-                .orElseThrow(() -> new RuntimeException("Erro na geração do token"));
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.create()
+                    .withIssuer("projectvet")
+                    .withSubject(user.getId())
+                    .withExpiresAt(genExpirationDate())
+                    .sign(algorithm);
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Error na geração do token!", exception);
+        }
     }
 
     public String validateToken(String token) {

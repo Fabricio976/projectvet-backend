@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.project.model.entitys.enums.Role;
+import com.project.model.entitys.enums.RoleName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,7 +33,7 @@ public class AnimalController {
     public List<Animal> searchAllAnimals(Authentication auth) {
         String userId = auth.getPrincipal().toString();
         String role = auth.getAuthorities().iterator().next().getAuthority();
-        return animalService.searchAllAnimalsByUser(userId, Role.valueOf(role));
+        return animalService.searchAllAnimalsByUser(userId, RoleName.valueOf(role));
     }
 
     @GetMapping("/search/{id}")

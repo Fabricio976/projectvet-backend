@@ -7,32 +7,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.project.model.entitys.enums.Role;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.project.model.entitys.enums.RoleName;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Usuario implements UserDetails {
@@ -45,8 +32,11 @@ public class Usuario implements UserDetails {
 
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private List<Role> role;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinTable(name="users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name="role_id"))
+    private List<Role> roles;
     private String name;
     private String address;
     private String phone;
@@ -60,12 +50,12 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "responsible")
     private List<Animal> animalsResponsible = new ArrayList<>();
 
-    public Usuario(String name, String email, String password, String cpf, List<Role> role, String address, String phone) {
+    public Usuario(String name, String email, String password, String cpf, List<Role> roles, String address, String phone) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.cpf = cpf;
-        this.role = role;
+        this.roles = roles;
         this.address = address;
         this.phone = phone;
     }
@@ -82,8 +72,8 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.stream()
-                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.name()))
+        return roles.stream()
+                .map(r -> new SimpleGrantedAuthority(getName()))
                 .collect(Collectors.toList());
     }
 

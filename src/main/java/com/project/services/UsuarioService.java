@@ -1,24 +1,26 @@
 package com.project.services;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.model.entitys.Role;
 import com.project.model.exeptions.EmailAlreadyExistsException;
 import com.project.model.exeptions.EmailNotFoundException;
 import com.project.model.exeptions.InvalidRecoveryCodeException;
-import com.project.services.details.ManagerUser;
+import com.project.security.SecurityConfigurations;
+import com.project.services.details.ManagerAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.project.model.dto.RegisterUserDTO;
 import com.project.model.entitys.Usuario;
-import com.project.model.entitys.enums.Role;
-import com.project.model.exeptions.RgNotFoundException;
+import com.project.model.entitys.enums.RoleName;
 import com.project.model.repositorys.UserRepository;
+
 @Service
 @Transactional
 public class UsuarioService {
@@ -27,38 +29,50 @@ public class UsuarioService {
     private UserRepository userRepository;
 
     @Autowired
-    private ManagerUser managerUser;
+    private SecurityConfigurations securityConfiguration;
 
-    public Usuario registerUser(RegisterUserDTO data) {
+    @Autowired
+    private ManagerAdmin managerAdmin;
+
+    public void registerUser(RegisterUserDTO data) {
         checkIfEmailExists(data.email());
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        Usuario newUser = new Usuario(
-                data.name(), data.email(), encryptedPassword,
-                data.cpf(), Role.CLIENT, data.address(), data.phone()
-        );
-        return userRepository.save(newUser);
+        Usuario newUser = Usuario.builder()
+                .name(data.name())
+                .email(data.email())
+                .password(securityConfiguration.passwordEncoder().encode(data.password()))
+                .roles(List.of(Role.builder().name(RoleName.ROLE_CLIENT).build()))
+                .cpf(data.cpf())
+                .address(data.address())
+                .phone(data.phone())
+                .build();
+
+        userRepository.save(newUser);
     }
 
-    public Usuario registerManager(RegisterUserDTO data) {
+    public void registerManager(RegisterUserDTO data) {
         checkIfEmailExists(data.email());
+        Usuario newUser = Usuario.builder()
+                .name(data.name())
+                .email(data.email())
+                .password(securityConfiguration.passwordEncoder().encode(data.password()))
+                .roles(List.of(Role.builder().name(RoleName.ROLE_MANAGER).build()))
+                .cpf(data.cpf())
+                .address(data.address())
+                .phone(data.phone())
+                .build();
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        Usuario newUser = new Usuario(
-                data.name(), data.email(), encryptedPassword,
-                data.cpf(), Role.MANAGER, data.address(), data.phone()
-        );
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
     }
 
     public String requestRecoveryCode(String email) {
         return Optional.ofNullable(userRepository.findByEmail(email))
-                .map(user -> managerUser.solicitarCodigo(email))
+                .map(user -> managerAdmin.solicitarCodigo(email))
                 .orElseThrow(() -> new EmailNotFoundException("Email não encontrado: " + email));
     }
 
     public void changePassword(Usuario usuario) {
-        Optional.of(managerUser.alterarSenha(usuario))
+        Optional.of(managerAdmin.alterarSenha(usuario))
                 .filter(msg -> msg.equals("Senha alterada com sucesso!"))
                 .orElseThrow(() -> new RuntimeException("Erro ao alterar a senha"));
     }
@@ -74,6 +88,8 @@ public class UsuarioService {
 
     private void checkIfEmailExists(String email) {
         Optional.ofNullable(userRepository.findByEmail(email))
-                .ifPresent(user -> { throw new EmailAlreadyExistsException("Email já cadastrado!"); });
+                .ifPresent(user -> {
+                    throw new EmailAlreadyExistsException("Email já cadastrado!");
+                });
     }
 }

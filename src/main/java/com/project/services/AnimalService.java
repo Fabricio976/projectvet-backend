@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import com.project.model.entitys.enums.Role;
+import com.project.model.entitys.enums.RoleName;
 import com.project.model.dto.RegisterAnimalDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.entitys.Usuario;
@@ -35,7 +35,7 @@ public class AnimalService {
         return animalRepository.findAll();
     }
 
-    public List<Animal> searchAllAnimalsByUser(String userId, Role role) {
+    public List<Animal> searchAllAnimalsByUser(String userId, RoleName role) {
         return "MANAGER".equals(role.name())
                 ? animalRepository.findAll()
                 : animalRepository.findByResponsibleId(userId);

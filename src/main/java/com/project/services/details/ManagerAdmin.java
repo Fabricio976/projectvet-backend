@@ -15,7 +15,7 @@ import com.project.model.repositorys.UserRepository;
  */
 @Service
 
-public class ManagerUser {
+public class ManagerAdmin {
 
     @Autowired
     private UserRepository userRepository;

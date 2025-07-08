@@ -38,10 +38,40 @@ public class SecurityConfigurations {
     private final SecurityFilter securityFilter;
     private final String jwtSecret;
 
+    //  Não requerem autenticação para serem acessados
+    public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
+            "/projectvet/login",
+            "/projectvet/register/manager",
+            "/projectvet/code-forgot",
+            "/projectvet/verify-code",
+            "/projectvet/change-password"
+    };
+
+    // Requerem autenticação para serem acessados
+    public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
+            "/projectvet/clinical-records/**",
+            "/projectvet/animal/**",
+            "/images/**"
+    };
+
+    // Só podem ser acessador por usuários com permissão de cliente
+    public static final String[] ENDPOINTS_CUSTOMER = {
+            "/projectvet/appointments/**"
+    };
+
+    // Só podem ser acessador por usuários com permissão de administrador
+    public static final String[] ENDPOINTS_ADMIN = {
+            "/projectvet/animal/**",
+            "/projectvet/register/**",
+            "/projectvet/clinical-records"
+    };
+
+
     public SecurityConfigurations(SecurityFilter securityFilter, @Value("${api.security.token.secret}") String jwtSecret) {
         this.securityFilter = securityFilter;
         this.jwtSecret = jwtSecret;
     }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -50,28 +80,15 @@ public class SecurityConfigurations {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-
-                        // ROTAS PÚBLICAS
-                        .requestMatchers(HttpMethod.POST, "/projectvet/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/projectvet/register/client").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/projectvet/code-forgot").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/projectvet/verify-code").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/projectvet/change-password").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/images/**").permitAll()
-
-                        // ROTAS RESTRITAS A MANAGER
-                        .requestMatchers(HttpMethod.GET, "/projectvet/clinical-records/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/projectvet/register/manager").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/projectvet/animal/**").authenticated()
-
-                        .requestMatchers("/projectvet/animal/**").hasAuthority("MANAGER")
-                        .requestMatchers("/projectvet/register/**").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/projectvet/clinical-records").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/projectvet/appointments/**").hasRole("CLIENT")
+                        .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
+                        .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
+                        .requestMatchers(ENDPOINTS_ADMIN).hasRole("MANAGER")
+                        .requestMatchers(ENDPOINTS_CUSTOMER).hasRole("CLIENT")
                         .anyRequest().authenticated())
+
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
