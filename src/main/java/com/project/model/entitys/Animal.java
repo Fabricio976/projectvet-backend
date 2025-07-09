@@ -34,6 +34,10 @@ public class Animal {
     @JsonManagedReference
     private List<ClinicalRecord> clinicalRecords = new ArrayList<>();
 
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<CustomerService> custumerServices = new ArrayList<>();
+
 
     private String photoUrl;
 

@@ -3,6 +3,7 @@ package com.project.services.details;
 import java.util.Date;
 import java.util.Random;
 
+import com.project.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -32,15 +32,16 @@ public class AnimalController {
     @Autowired
     private AnimalRepository animalRepository;
 
+    private ResponseEntity<Map<String, String>> response(String message) {
+        return ResponseEntity.ok(Map.of("message", message));
+    }
 
     @GetMapping("/searchAll")
     public List<Animal> searchAllAnimals(Authentication auth) {
         Jwt jwt = (Jwt) auth.getPrincipal();
-        String userId = jwt.getClaimAsString("sub"); // Substitua "sub" pelo claim correto, se necessário
+        String userId = jwt.getClaimAsString("sub");
         boolean isManager = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("MANAGER"));
-        System.out.println("userId: " + userId);
-        System.out.println("isManager: " + isManager);
         return animalService.searchAllAnimalsByUser(userId, isManager);
     }
 
@@ -111,7 +112,5 @@ public class AnimalController {
                 .orElse(false);
     }*/
 
-    private ResponseEntity<Map<String, String>> response(String message) {
-        return ResponseEntity.ok(Map.of("message", message));
-    }
+
 }

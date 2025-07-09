@@ -13,7 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 // Ficha
-public class ClinicalRecord {
+public class CustomerService {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -22,6 +23,8 @@ public class ClinicalRecord {
     private Date consultationDate;
 
     private String description;
+
+    private ServicePet servicePet;
 
     @ManyToMany
     @JoinColumn(name = "animal_id")

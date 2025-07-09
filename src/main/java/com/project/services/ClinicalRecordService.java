@@ -1,4 +1,4 @@
-package com.project.services.details;
+package com.project.services;
 
 import com.project.model.dto.ClinicalRecordDTO;
 import com.project.model.entitys.Animal;

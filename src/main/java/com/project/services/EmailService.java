@@ -1,4 +1,4 @@
-package com.project.services.details;
+package com.project.services;
 
 import java.io.IOException;
 import java.util.Map;
