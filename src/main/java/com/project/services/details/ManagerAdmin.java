@@ -15,7 +15,6 @@ import com.project.model.repositorys.UserRepository;
  * Classe responsável pela solicitação de código de recuperação de senha e alteração de senha.
  */
 @Service
-
 public class ManagerAdmin {
 
     @Autowired

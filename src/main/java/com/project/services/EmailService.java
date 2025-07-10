@@ -64,8 +64,9 @@ public class EmailService {
      * @param destinatario endereço de email do destinatário
      * @param titulo       assunto do email
      * @param propriedades propriedades a serem usadas no template do email
+     * @return
      */
-    public void enviarEmailTemplate(String destinatario, String titulo, Map<String, Object> propriedades) {
+    public String enviarEmailTemplate(String destinatario, String titulo, Map<String, Object> propriedades) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
@@ -78,6 +79,7 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new EmailException("Error ao enviar email com template!", e);
         }
+        return destinatario;
     }
 
     /**
@@ -87,13 +89,12 @@ public class EmailService {
      * @return conteúdo do email gerado a partir do template
      */
     public String getConteudoTemplate(Map<String, Object> model) {
-        StringBuilder content = new StringBuilder();
+
         try {
-            content.append(FreeMarkerTemplateUtils
-                    .processTemplateIntoString(fmConfiguration.getTemplate("recuperacao-codigo.ftl"), model));
+            return FreeMarkerTemplateUtils
+                    .processTemplateIntoString(fmConfiguration.getTemplate("recuperacao-codigo.ftl"), model);
         } catch (TemplateException | IOException e) {
             throw new TemplateProcessingException("Error ao processar template com template!", e);
         }
-        return content.toString();
     }
 }
