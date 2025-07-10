@@ -46,12 +46,12 @@ public class EmailService {
      */
     public String enviarEmailTexto(String destinatario, String titulo, String mensagem) {
         try {
-            SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            simpleMailMessage.setFrom(remetente);
-            simpleMailMessage.setTo(destinatario);
-            simpleMailMessage.setSubject(titulo);
-            simpleMailMessage.setText(mensagem);
-            javaMailSender.send(simpleMailMessage);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(remetente);
+            message.setTo(destinatario);
+            message.setSubject(titulo);
+            message.setText(mensagem);
+            javaMailSender.send(message);
             return "Email enviado";
         } catch (MailException ex) {
             return "Erro ao enviar o email";
@@ -66,16 +66,29 @@ public class EmailService {
      * @param propriedades propriedades a serem usadas no template do email
      * @return
      */
-    public String enviarEmailTemplate(String destinatario, String titulo, Map<String, Object> propriedades) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-            mimeMessageHelper.setSubject(titulo);
-            mimeMessageHelper.setFrom(remetente);
-            mimeMessageHelper.setTo(destinatario);
-            mimeMessageHelper.setText(getConteudoTemplate(propriedades), true);
 
-            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+    public String enviarEmailTemplate(String destinatario, String titulo, Map<String, Object> propriedades) {
+        try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setSubject(titulo);
+            helper.setFrom(remetente);
+            helper.setTo(destinatario);
+
+            String templateName;
+
+            if (titulo.contains("Nova Solicitação")) {
+                templateName = "appointment_request.ftl";
+            } else if (titulo.contains("Confirmação")) {
+                templateName = "appointment_confirmation.ftl";
+            } else if (titulo.contains("Rejeição")) {
+                templateName = "appointment_rejection.ftl";
+            } else {
+                templateName = "recuperacao-codigo.ftl";
+            }
+
+            helper.setText(getConteudoTemplate(propriedades, templateName), true);
+            javaMailSender.send(helper.getMimeMessage());
         } catch (MessagingException e) {
             throw new EmailException("Error ao enviar email com template!", e);
         }
@@ -85,14 +98,12 @@ public class EmailService {
     /**
      * gera o conteúdo do email a partir de um template
      *
-     * @param model dados a serem incluídos no template
      * @return conteúdo do email gerado a partir do template
      */
-    public String getConteudoTemplate(Map<String, Object> model) {
-
+    public String getConteudoTemplate(Map<String, Object> model, String templateName) {
         try {
             return FreeMarkerTemplateUtils
-                    .processTemplateIntoString(fmConfiguration.getTemplate("recuperacao-codigo.ftl"), model);
+                    .processTemplateIntoString(fmConfiguration.getTemplate(templateName), model);
         } catch (TemplateException | IOException e) {
             throw new TemplateProcessingException("Error ao processar template com template!", e);
         }

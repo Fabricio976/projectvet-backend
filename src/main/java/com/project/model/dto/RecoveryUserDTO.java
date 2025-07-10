@@ -5,7 +5,7 @@ import com.project.model.entitys.Role;
 import java.util.List;
 
 public record RecoveryUserDTO(
-        Long id,
+        String id,
         String email,
         List<Role> roles
 ) {

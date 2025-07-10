@@ -6,11 +6,16 @@ import com.project.services.EmailService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.MailException;
@@ -42,114 +47,86 @@ public class EmailServiceTest {
     private EmailService emailService;
 
     @BeforeEach
-    void setUp() {
-        // Configura o remetente via reflexão
-        try {
-            java.lang.reflect.Field field = EmailService.class.getDeclaredField("remetente");
-            field.setAccessible(true);
-            field.set(emailService, "teste@exemplo.com");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    void setUp() throws Exception {
+        var field = EmailService.class.getDeclaredField("remetente");
+        field.setAccessible(true);
+        field.set(emailService, "teste@exemplo.com");
     }
 
     @Test
     void testEnviarEmailTextoSucesso() {
-        // Arrange
-        String destinatario = "destinatario@exemplo.com";
-        String titulo = "Teste Assunto";
-        String mensagem = "Teste Mensagem";
-
-        // Act
-        String resultado = emailService.enviarEmailTexto(destinatario, titulo, mensagem);
-
-        // Assert
+        String resultado = emailService.enviarEmailTexto("dest@exemplo.com", "Assunto", "Mensagem");
         assertEquals("Email enviado", resultado);
-        verify(javaMailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(javaMailSender).send(any(SimpleMailMessage.class));
     }
 
     @Test
     void testEnviarEmailTextoErro() {
-        // Arrange
-        String destinatario = "destinatario@exemplo.com";
-        String titulo = "Teste Assunto";
-        String mensagem = "Teste Mensagem";
-        doThrow(new MailException("Erro de envio") {}).when(javaMailSender).send(any(SimpleMailMessage.class));
-
-        // Act
-        String resultado = emailService.enviarEmailTexto(destinatario, titulo, mensagem);
-
-        // Assert
+        doThrow(new MailException("Erro") {}).when(javaMailSender).send(any(SimpleMailMessage.class));
+        String resultado = emailService.enviarEmailTexto("dest@exemplo.com", "Assunto", "Mensagem");
         assertEquals("Erro ao enviar o email", resultado);
-        verify(javaMailSender, times(1)).send(any(SimpleMailMessage.class));
+        verify(javaMailSender).send(any(SimpleMailMessage.class));
     }
 
-    @Test
-    void testEnviarEmailTemplateSucesso() throws Exception {
-        // Arrange
-        String destinatario = "destinatario@exemplo.com";
-        String titulo = "Teste Template";
-        Map<String, Object> propriedades = new HashMap<>();
-        propriedades.put("chave", "valor");
+    @ParameterizedTest
+    @CsvSource({
+            "Nova Solicitação,appointment_request.ftl",
+            "Confirmação da Consulta,appointment_confirmation.ftl",
+            "Rejeição de Agendamento,appointment_rejection.ftl",
+            "Outro Assunto,recuperacao-codigo.ftl"
+    })
+    void testEnviarEmailTemplateEscolhaDeTemplate(String titulo, String templateEsperado) throws Exception {
+        MimeMessage mimeMessage = mock(MimeMessage.class);
+        when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        when(fmConfiguration.getTemplate(templateEsperado)).thenReturn(template);
 
-        when(fmConfiguration.getTemplate(anyString())).thenReturn(template);
-        when(javaMailSender.createMimeMessage()).thenReturn(mock(MimeMessage.class));
+        Map<String, Object> props = Map.of("chave", "valor");
 
-        // Act
-        String resultado = emailService.enviarEmailTemplate(destinatario, titulo, propriedades);
-
-        // Assert
-        assertEquals(destinatario, resultado);
-        verify(javaMailSender, times(1)).send(any(MimeMessage.class));
-    }
-
-
-    @Test
-    void testGetConteudoTemplateSucesso() throws Exception {
-        // Arrange
-        Map<String, Object> model = new HashMap<>();
-        model.put("chave", "valor");
-
-        when(fmConfiguration.getTemplate("recuperacao-codigo.ftl")).thenReturn(template);
-
-        String conteudoEsperado = "Conteúdo processado";
         try (MockedStatic<FreeMarkerTemplateUtils> mocked = mockStatic(FreeMarkerTemplateUtils.class)) {
-            mocked.when(() -> FreeMarkerTemplateUtils.processTemplateIntoString(eq(template), eq(model)))
-                    .thenReturn(conteudoEsperado);
+            mocked.when(() -> FreeMarkerTemplateUtils.processTemplateIntoString(eq(template), eq(props)))
+                    .thenReturn("<html>email</html>");
 
-            // Act
-            String resultado = emailService.getConteudoTemplate(model);
+            String retorno = emailService.enviarEmailTemplate("dest@exemplo.com", titulo, props);
 
-            // Assert
-            assertEquals(conteudoEsperado, resultado);
+            assertEquals("dest@exemplo.com", retorno);
+            verify(fmConfiguration).getTemplate(templateEsperado);
+            verify(javaMailSender).send(any(MimeMessage.class));
         }
     }
 
     @Test
-    void testGetConteudoTemplateTemplateException() throws Exception {
-        // Arrange
-        Map<String, Object> model = new HashMap<>();
-        model.put("chave", "valor");
+    void testGetConteudoTemplateComSucesso() throws Exception {
+        Map<String, Object> model = Map.of("codigo", "123456");
         when(fmConfiguration.getTemplate("recuperacao-codigo.ftl")).thenReturn(template);
 
         try (MockedStatic<FreeMarkerTemplateUtils> mocked = mockStatic(FreeMarkerTemplateUtils.class)) {
             mocked.when(() -> FreeMarkerTemplateUtils.processTemplateIntoString(eq(template), eq(model)))
-                    .thenThrow(new TemplateException("Erro no template", null));
+                    .thenReturn("Email processado");
 
-            // Act & Assert
-            assertThrows(TemplateProcessingException.class, () -> emailService.getConteudoTemplate(model));
+            String resultado = emailService.getConteudoTemplate(model, "recuperacao-codigo.ftl");
+            assertEquals("Email processado", resultado);
         }
     }
 
     @Test
-    void testGetConteudoTemplateIOException() throws Exception {
-        // Arrange
-        Map<String, Object> model = new HashMap<>();
-        model.put("chave", "valor");
+    void testGetConteudoTemplateLancaTemplateException() throws Exception {
+        Map<String, Object> model = Map.of("codigo", "123456");
+        when(fmConfiguration.getTemplate("recuperacao-codigo.ftl")).thenReturn(template);
+
+        try (MockedStatic<FreeMarkerTemplateUtils> mocked = mockStatic(FreeMarkerTemplateUtils.class)) {
+            mocked.when(() -> FreeMarkerTemplateUtils.processTemplateIntoString(eq(template), eq(model)))
+                    .thenThrow(new TemplateException("Erro", null));
+
+            assertThrows(TemplateProcessingException.class, () -> emailService.getConteudoTemplate(model, "recuperacao-codigo.ftl"));
+        }
+    }
+
+    @Test
+    void testGetConteudoTemplateLancaIOException() throws Exception {
         when(fmConfiguration.getTemplate("recuperacao-codigo.ftl")).thenThrow(new IOException("Erro de IO"));
-
-        // Act & Assert
-        assertThrows(TemplateProcessingException.class, () -> emailService.getConteudoTemplate(model));
+        assertThrows(TemplateProcessingException.class, () ->
+                emailService.getConteudoTemplate(Map.of(), "recuperacao-codigo.ftl"));
     }
-}
 
+
+}

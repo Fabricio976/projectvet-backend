@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -18,7 +19,8 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "usuario_id")
     private Usuario userEmail;
 
     @Column(nullable = false)
@@ -29,5 +31,11 @@ public class Appointment {
 
     private LocalDateTime confirmedDateTime;
     private String adminNotes;
+
+    public Appointment(Usuario userEmail, LocalDateTime requestedDateTime) {
+        this.userEmail = userEmail;
+        this.requestedDateTime = requestedDateTime;
+        this.status = AppointmentStatus.PENDING;
+    }
 
 }

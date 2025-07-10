@@ -5,6 +5,7 @@ import com.project.model.entitys.Usuario;
 import com.project.model.entitys.enums.AppointmentStatus;
 import com.project.model.repositorys.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,9 @@ public class AppointmentService {
     @Autowired
     private EmailService emailService;
 
+    @Value("${spring.mail.username}")
+    private String adminEmail;
+
     public Appointment requestAppointment(Usuario userEmail, LocalDateTime requestedDateTime) {
         Appointment appointment = new Appointment(userEmail, requestedDateTime);
         Appointment savedAppointment = appointmentRepository.save(appointment);
@@ -31,7 +35,7 @@ public class AppointmentService {
         properties.put("appointmentId", savedAppointment.getId());
 
         emailService.enviarEmailTemplate(
-                "fabricioemanuel20@gmail.com", // Replace with actual admin email
+                adminEmail,
                 "Nova Solicitação de Consulta",
                 properties
         );
@@ -49,13 +53,12 @@ public class AppointmentService {
 
         Appointment updatedAppointment = appointmentRepository.save(appointment);
 
-        // Send confirmation email to user
         Map<String, Object> properties = new HashMap<>();
         properties.put("confirmedDateTime", confirmedDateTime.toString());
         properties.put("adminNotes", adminNotes != null ? adminNotes : "");
 
         emailService.enviarEmailTemplate(
-                String.valueOf(appointment.getUserEmail()),
+                adminEmail,
                 "Confirmação de Consulta",
                 properties
         );
@@ -72,12 +75,11 @@ public class AppointmentService {
 
         Appointment updatedAppointment = appointmentRepository.save(appointment);
 
-        // Send rejection email to user
         Map<String, Object> properties = new HashMap<>();
         properties.put("adminNotes", adminNotes != null ? adminNotes : "");
 
         emailService.enviarEmailTemplate(
-                String.valueOf(appointment.getUserEmail()),
+                adminEmail,
                 "Rejeição de Consulta",
                 properties
         );
