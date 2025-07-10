@@ -36,7 +36,7 @@ public class Animal {
 
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<CustomerService> custumerServices = new ArrayList<>();
+    private List<ServiceCustomer> custumerServices = new ArrayList<>();
 
 
     private String photoUrl;

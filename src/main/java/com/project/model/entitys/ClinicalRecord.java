@@ -23,7 +23,7 @@ public class ClinicalRecord {
 
     private String description;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "animal_id")
     private Animal animal;
 }

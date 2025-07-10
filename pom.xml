@@ -7,13 +7,13 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.3</version>
     </parent>
-    <groupId>com.prject-vet</groupId>
+    <groupId>com.prject</groupId>
     <artifactId>demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>projectvet</name>
     <description>Project Veterinarian</description>
     <properties>
-        <java.version>18</java.version>
+        <java.version>21</java.version>
     </properties>
     <dependencies>
         <dependency>
