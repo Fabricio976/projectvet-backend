@@ -63,7 +63,7 @@ public class SecurityConfigurations {
 
     // Só podem ser acessador por usuários administradores
     public static final String[] ENDPOINTS_ADMIN = {
-            "/projectvet/animal/**",
+            "/projectvet/animal/register",
             "/projectvet/register/**",
             "/projectvet/clinical-records"
     };

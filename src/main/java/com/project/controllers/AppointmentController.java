@@ -28,7 +28,7 @@ public class AppointmentController {
 
     @PostMapping("/{id}/confirm")
     public ResponseEntity<Appointment> confirmAppointment(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime confirmedDateTime,
             @RequestParam(required = false) String adminNotes) {
         Appointment appointment = appointmentService.confirmAppointment(id, confirmedDateTime, adminNotes);
@@ -37,7 +37,7 @@ public class AppointmentController {
 
     @PostMapping("/{id}/reject")
     public ResponseEntity<Appointment> rejectAppointment(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam(required = false) String adminNotes) {
         Appointment appointment = appointmentService.rejectAppointment(id, adminNotes);
         return ResponseEntity.ok(appointment);
@@ -50,7 +50,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/user/{email}")
-    public ResponseEntity<List<Appointment>> getUserAppointments(@PathVariable String email) {
+    public ResponseEntity<List<Appointment>> getUserAppointments(@PathVariable Usuario email) {
         List<Appointment> appointments = appointmentService.getUserAppointments(email);
         return ResponseEntity.ok(appointments);
     }

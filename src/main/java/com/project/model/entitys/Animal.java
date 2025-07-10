@@ -30,14 +30,12 @@ public class Animal {
     private String race;
     private String specie;
 
+    @OneToMany(mappedBy = "animalAppointment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointments;
+
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ClinicalRecord> clinicalRecords = new ArrayList<>();
-
-    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<ServiceCustomer> custumerServices = new ArrayList<>();
-
 
     private String photoUrl;
 

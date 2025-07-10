@@ -3,12 +3,7 @@ package com.project.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.project.model.entitys.Role;
-import com.project.model.entitys.Usuario;
-import com.project.model.entitys.enums.RoleName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -84,33 +79,6 @@ public class AnimalController {
         animalService.excluir(id);
         return response("Animal excluído com sucesso!");
     }
-
- /*   @GetMapping("/searchBarra")
-    public List<Animal> searchAnimals(@RequestParam("query") String query, Authentication auth) {
-        String userId = auth.getPrincipal().toString();
-        String role = auth.getAuthorities().iterator().next().getAuthority();
-        String normalizedQuery = query.trim().toLowerCase();
-
-        return ("MANAGER".equals(role)
-                ? animalRepository.findAll()
-                : animalRepository.findByResponsibleId(userId))
-                .stream()
-                .filter(animal -> matchesQuery(animal, normalizedQuery))
-                .collect(Collectors.toList());
-    }
-
-    private boolean matchesQuery(Animal animal, String query) {
-        return Optional.ofNullable(animal)
-                .map(a -> Stream.of(
-                        String.valueOf(a.getRg()),
-                        Optional.ofNullable(a.getName()).orElse("").toLowerCase(),
-                        Optional.ofNullable(a.getResponsible())
-                                .map(r -> r.getCpf() + r.getEmail())
-                                .orElse("")
-                                .toLowerCase()
-                ).anyMatch(value -> value.contains(query)))
-                .orElse(false);
-    }*/
 
 
 }

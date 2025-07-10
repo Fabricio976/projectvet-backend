@@ -19,7 +19,7 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario userEmail;
 
@@ -28,6 +28,10 @@ public class Appointment {
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "animal_id")
+    private Animal animalAppointment;
 
     private LocalDateTime confirmedDateTime;
     private String adminNotes;

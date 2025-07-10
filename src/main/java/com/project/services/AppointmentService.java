@@ -43,7 +43,7 @@ public class AppointmentService {
         return savedAppointment;
     }
 
-    public Appointment confirmAppointment(Long appointmentId, LocalDateTime confirmedDateTime, String adminNotes) {
+    public Appointment confirmAppointment(String appointmentId, LocalDateTime confirmedDateTime, String adminNotes) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
@@ -66,7 +66,7 @@ public class AppointmentService {
         return updatedAppointment;
     }
 
-    public Appointment rejectAppointment(Long appointmentId, String adminNotes) {
+    public Appointment rejectAppointment(String appointmentId, String adminNotes) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
@@ -91,7 +91,7 @@ public class AppointmentService {
         return appointmentRepository.findByStatus(AppointmentStatus.PENDING);
     }
 
-    public List<Appointment> getUserAppointments(String userEmail) {
+    public List<Appointment> getUserAppointments(Usuario userEmail) {
         return appointmentRepository.findByUserEmail(userEmail);
     }
 }
