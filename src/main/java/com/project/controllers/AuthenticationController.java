@@ -58,10 +58,10 @@ public class AuthenticationController {
                 .map(auth -> {
                     Usuario usuario = (Usuario) auth.getPrincipal();
                     String token = tokenService.generateToken(usuario);
-                    return new LoginResponseDTO(token, usuario.getId(), usuario.getName(), auth.getAuthorities());
+                    return new LoginResponseDTO(token, usuario.getId());
                 })
                 .map(ResponseEntity::ok)
-                .orElseThrow(() -> new InvalidCredentialsException("Erro inesperado no login")); // fallback seguro
+                .orElseThrow(() -> new InvalidCredentialsException("Erro inesperado no login"));
     }
 
 

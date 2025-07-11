@@ -36,7 +36,6 @@ public class UsuarioService {
 
     public void registerUser(RegisterUserDTO data) {
         checkIfEmailExists(data.email());
-
         Usuario newUser = Usuario.builder()
                 .name(data.name())
                 .email(data.email())

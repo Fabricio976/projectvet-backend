@@ -22,7 +22,7 @@ public class ClinicalRecordService {
     private ClinicalRecordRepository clinicalRecordRepository;
 
     public String createRecord(ClinicalRecordDTO dto) {
-        Animal animal = animalRepository.findById(dto.animalId())
+        Animal animal = animalRepository.findByRg(dto.rg())
                 .orElseThrow(() -> new AnimalNotFoundException("Animal não encontrado"));
 
         ClinicalRecord record = new ClinicalRecord();
@@ -34,15 +34,11 @@ public class ClinicalRecordService {
         return "Ficha registrada com sucesso!";
     }
 
-    public List<ClinicalRecord> listByAnimal(String animalId) {
-        return clinicalRecordRepository.findByAnimalId(animalId);
-    }
-
     public String updateRecord(String id, ClinicalRecordDTO dto) {
         ClinicalRecord record = clinicalRecordRepository.findById(id)
                 .orElseThrow(() -> new ClinicalRecordNotFoundException("Ficha clínica não encontrada"));
 
-        Animal animal = animalRepository.findById(dto.animalId())
+        Animal animal = animalRepository.findByRg(dto.rg())
                 .orElseThrow(() -> new AnimalNotFoundException("Animal não encontrado"));
 
         record.setAnimal(animal);
@@ -53,7 +49,7 @@ public class ClinicalRecordService {
         return "Ficha atualizada com sucesso!";
     }
 
-    public String deleteRecord(String id) {
+    public String deleteRecord(String  id) {
         ClinicalRecord record = clinicalRecordRepository.findById(id)
                 .orElseThrow(() -> new ClinicalRecordNotFoundException("Ficha clínica não encontrada"));
 

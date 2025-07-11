@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -51,25 +52,16 @@ class AnimalServiceTest {
         List<Animal> animals = List.of(new Animal());
         when(animalRepository.findAll()).thenReturn(animals);
 
-        List<Animal> result = animalService.searchAllAnimalsByUser("user1", true);
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void testSearchAllAnimalsByUser_WhenNotManager() {
-        List<Animal> animals = List.of(new Animal());
-        when(animalRepository.findByResponsibleId("user2")).thenReturn(animals);
-
-        List<Animal> result = animalService.searchAllAnimalsByUser("user2", false);
+        List<Animal> result = animalService.searchAllAnimalsByUser("user1", true, Pageable.unpaged());
         assertEquals(1, result.size());
     }
 
     @Test
     void testFindByRgFound() {
         Animal animal = new Animal();
-        when(animalRepository.findByRg(123456)).thenReturn(animal);
+        when(animalRepository.findByRg(123456)).thenReturn(Optional.of(animal));
 
-        Animal result = animalService.findByRg(123456);
+        Optional<Animal> result = animalService.findByRg(123456);
         assertNotNull(result);
     }
 

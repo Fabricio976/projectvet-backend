@@ -63,9 +63,8 @@ public class SecurityConfigurations {
 
     // Só podem ser acessador por usuários administradores
     public static final String[] ENDPOINTS_ADMIN = {
-            "/projectvet/animal/register",
-            "/projectvet/register/**",
-            "/projectvet/clinical-records"
+            "/projectvet/animal/**",
+            "/projectvet/clinical-records/**"
     };
 
 
@@ -88,8 +87,6 @@ public class SecurityConfigurations {
                         .requestMatchers(ENDPOINTS_CUSTOMER).hasRole("CLIENT")
                         .anyRequest().denyAll())
 
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
 
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -98,24 +95,6 @@ public class SecurityConfigurations {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
-
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-        return jwtAuthenticationConverter;
-    }
-
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(
-                jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec).build();
     }
 
     @Bean

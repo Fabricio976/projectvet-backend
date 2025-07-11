@@ -5,7 +5,7 @@ import com.project.model.entitys.enums.ServicePet;
 import java.util.Date;
 
 public record ClinicalRecordDTO(
-        String animalId,
+        Integer rg,
         Date consultationDate,
         String description
 ) {

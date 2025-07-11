@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import com.project.model.entitys.Role;
-import com.project.model.entitys.enums.RoleName;
 import com.project.model.dto.RegisterAnimalDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.entitys.Usuario;
@@ -17,6 +15,8 @@ import com.project.model.repositorys.AnimalRepository;
 import com.project.model.repositorys.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,17 +32,29 @@ public class AnimalService {
 
     private final Random random = new Random();
 
+    private int generateUniqueRg() {
+        return generateRgStream()
+                .filter(rg -> !animalRepository.existsByRg(rg))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    private java.util.stream.IntStream generateRgStream() {
+        return random.ints(10000000, 99999999).distinct().limit(1000);
+    }
+
     public List<Animal> searchAllAnimals() {
         return animalRepository.findAll();
     }
 
-    public List<Animal> searchAllAnimalsByUser(String userId, boolean isManager) {
+
+    public Page<Animal> searchAllAnimalsByUser(String userId, boolean isManager, Pageable pageable) {
         return isManager
-                ? animalRepository.findAll()
-                : animalRepository.findByResponsibleId(userId);
+                ? animalRepository.findAll(pageable)
+                : animalRepository.findByResponsibleId(userId, pageable);
     }
 
-    public Animal findByRg(int rg) {
+    public Optional<Animal> findByRg(Integer rg) {
         return Optional.ofNullable(animalRepository.findByRg(rg))
                 .orElseThrow(() -> new RgNotFoundException("Não existe animal cadastrado com esse RG: " + rg));
     }
@@ -94,14 +106,5 @@ public class AnimalService {
         animalRepository.deleteById(id);
     }
 
-    private int generateUniqueRg() {
-        return generateRgStream()
-                .filter(rg -> !animalRepository.existsByRg(rg))
-                .findFirst()
-                .orElseThrow();
-    }
 
-    private java.util.stream.IntStream generateRgStream() {
-        return random.ints(10000000, 99999999).distinct().limit(1000);
-    }
 }

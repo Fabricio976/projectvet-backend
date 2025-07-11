@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/projectvet/clinical-records")
@@ -35,15 +36,12 @@ public class ClinicalRecordController {
         return ResponseEntity.ok(Map.of("message", result));
     }
 
-    @GetMapping("/animal/{animalId}")
-    public List<ClinicalRecord> listByAnimal(@PathVariable String animalId) {
-        return clinicalRecordService.listByAnimal(animalId);
-    }
-    public String updateRecord(String id, ClinicalRecordDTO dto) {
+    @PatchMapping("/edit/{id}")
+    public String updateRecord(@PathVariable String id, @RequestBody ClinicalRecordDTO dto) {
         ClinicalRecord record = clinicalRecordRepository.findById(id)
                 .orElseThrow(() -> new ClinicalRecordNotFoundException("Ficha clínica não encontrada"));
 
-        Animal animal = animalRepository.findById(dto.animalId())
+        Animal animal = animalRepository.findByRg(dto.rg())
                 .orElseThrow(() -> new AnimalNotFoundException("Animal não encontrado"));
 
         record.setAnimal(animal);
@@ -54,7 +52,8 @@ public class ClinicalRecordController {
         return "Ficha de consulta atualizada com sucesso!";
     }
 
-    public String deleteRecord(String id) {
+    @DeleteMapping("/delete/{id}")
+    public String deleteRecord(@PathVariable String id) {
         ClinicalRecord record = clinicalRecordRepository.findById(id)
                 .orElseThrow(() -> new ClinicalRecordNotFoundException("Ficha clínica não encontrada"));
 

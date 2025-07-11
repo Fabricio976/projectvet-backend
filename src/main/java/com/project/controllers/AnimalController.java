@@ -5,9 +5,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import com.project.model.dto.RegisterAnimalDTO;
@@ -32,12 +35,16 @@ public class AnimalController {
     }
 
     @GetMapping("/searchAll")
-    public List<Animal> searchAllAnimals(Authentication auth) {
-        Jwt jwt = (Jwt) auth.getPrincipal();
-        String userId = jwt.getClaimAsString("sub");
+    public Page<Animal> searchAllAnimals(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            Authentication auth) {
+        String userId = auth.getPrincipal().toString();
         boolean isManager = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("MANAGER"));
-        return animalService.searchAllAnimalsByUser(userId, isManager);
+                .anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("dateRegister").descending());
+        return animalService.searchAllAnimalsByUser(userId, isManager, pageable);
     }
 
 
@@ -54,7 +61,7 @@ public class AnimalController {
     }
 
     @GetMapping("/animalRg/{rg}")
-    public Animal getAnimaisByRg(@PathVariable int rg) {
+    public Optional<Animal> getAnimaisByRg(@PathVariable int rg) {
         return animalService.findByRg(rg);
     }
 

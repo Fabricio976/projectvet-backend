@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +23,16 @@ import com.project.model.entitys.enums.RoleName;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@JsonIgnoreProperties(value = {"roles",
+        "password",
+        "codeRecoveryPassword",
+        "dateShippingCodigo",
+        "codeRecoveryPassword",
+        "authorities",
+        "accountNonLocked",
+        "accountNonExpired",
+        "credentialsNonExpired"
+}, allowGetters = false, allowSetters = true)
 public class Usuario implements UserDetails {
 
     @Id
@@ -29,10 +40,9 @@ public class Usuario implements UserDetails {
     private String id;
     private String cpf;
     private String email;
-
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER,  cascade = CascadeType.PERSIST)
     @JoinTable(name="users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name="role_id"))
@@ -41,10 +51,9 @@ public class Usuario implements UserDetails {
     private String address;
     private String phone;
 
-    private String codeRecoveryPassword;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateShippingCodigo;
+    private String codeRecoveryPassword;
 
     @JsonIgnore
     @OneToMany(mappedBy = "responsible")

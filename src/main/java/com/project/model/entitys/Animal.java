@@ -24,7 +24,7 @@ public class Animal {
     private String id;
 
     @Column(unique = true, nullable = false)
-    private int rg;
+    private Integer rg;
     private String name;
     private int age;
     private String race;
@@ -42,11 +42,12 @@ public class Animal {
     @Temporal(TemporalType.DATE)
     private Date dateRegister;
 
+    @Enumerated(EnumType.STRING)
+    private ServicePet servicePet;
+
     @ManyToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario responsible;
 
-    @Enumerated(EnumType.STRING)
-    private ServicePet servicePet;
 
 }
