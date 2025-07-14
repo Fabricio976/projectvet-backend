@@ -1,7 +1,7 @@
 <html>
 <body>
-    <h2>Rejeição de Consulta</h2>
-    <p>Infelizmente, sua solicitação de consulta não pôde ser confirmada.</p>
+    <h2>Rejeição de Atendimento</h2>
+    <p>Infelizmente, sua solicitação de atendimento não pôde ser confirmada.</p>
     <#if adminNotes?has_content>
         <p><strong>Motivo:</strong> ${adminNotes}</p>
     </#if>

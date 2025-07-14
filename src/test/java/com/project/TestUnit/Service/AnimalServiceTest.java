@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.*;
@@ -52,8 +53,8 @@ class AnimalServiceTest {
         List<Animal> animals = List.of(new Animal());
         when(animalRepository.findAll()).thenReturn(animals);
 
-        List<Animal> result = animalService.searchAllAnimalsByUser("user1", true, Pageable.unpaged());
-        assertEquals(1, result.size());
+        Page<Animal> result = animalService.searchAllAnimalsByUser("user1", true, Pageable.unpaged());
+        assertEquals(1, result.stream().toList());
     }
 
     @Test

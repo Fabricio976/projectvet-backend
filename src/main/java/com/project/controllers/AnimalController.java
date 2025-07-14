@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,11 @@ import com.project.services.AnimalService;
 
 import jakarta.validation.Valid;
 
+import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
+
 @RestController
 @RequestMapping("/projectvet/animal")
+@EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class AnimalController {
 
     @Autowired

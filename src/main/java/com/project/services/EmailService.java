@@ -78,11 +78,11 @@ public class EmailService {
             String templateName;
 
             if (titulo.contains("Nova Solicitação")) {
-                templateName = "appointment_request.ftl";
+                templateName = "appointment-request.ftl";
             } else if (titulo.contains("Confirmação")) {
-                templateName = "appointment_confirmation.ftl";
+                templateName = "appointment-confirmation.ftl";
             } else if (titulo.contains("Rejeição")) {
-                templateName = "appointment_rejection.ftl";
+                templateName = "appointment-rejection.ftl";
             } else {
                 templateName = "recuperacao-codigo.ftl";
             }

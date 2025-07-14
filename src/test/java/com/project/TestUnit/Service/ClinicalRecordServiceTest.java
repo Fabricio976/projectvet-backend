@@ -40,7 +40,7 @@ class ClinicalRecordServiceTest {
 
     @Test
     void testCreateRecordSuccess() {
-        ClinicalRecordDTO dto = new ClinicalRecordDTO("animal123", new Date(),"Atualizado");
+        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
         Animal animal = new Animal();
         when(animalRepository.findById("animal123")).thenReturn(Optional.of(animal));
 
@@ -52,7 +52,7 @@ class ClinicalRecordServiceTest {
 
     @Test
     void testCreateRecordAnimalNotFound() {
-        ClinicalRecordDTO dto = new ClinicalRecordDTO("animal123", new Date(),"Atualizado");
+        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
         when(animalRepository.findById("animal112")).thenReturn(Optional.empty());
 
         assertThrows(AnimalNotFoundException.class, () -> clinicalRecordService.createRecord(dto));
@@ -64,7 +64,7 @@ class ClinicalRecordServiceTest {
         ClinicalRecord record = new ClinicalRecord();
         record.setId("rec123");
 
-        ClinicalRecordDTO dto = new ClinicalRecordDTO("animal123", new Date(),"Atualizado");
+        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
         Animal animal = new Animal();
 
         when(clinicalRecordRepository.findById("rec123")).thenReturn(Optional.of(record));
@@ -81,7 +81,7 @@ class ClinicalRecordServiceTest {
 
     @Test
     void testUpdateRecordNotFound() {
-        ClinicalRecordDTO dto = new ClinicalRecordDTO("animal123", new Date(),"Atualizado");
+        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
         when(clinicalRecordRepository.findById("na")).thenReturn(Optional.empty());
 
         assertThrows(ClinicalRecordNotFoundException.class, () -> clinicalRecordService.updateRecord("inexistente", dto));
@@ -91,7 +91,7 @@ class ClinicalRecordServiceTest {
     void testUpdateRecordAnimalNotFound() {
         ClinicalRecord record = new ClinicalRecord();
         record.setId("rec123");
-        ClinicalRecordDTO dto = new ClinicalRecordDTO("animal123", new Date(),"Atualizado");
+        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
 
         when(clinicalRecordRepository.findById("rec123")).thenReturn(Optional.of(record));
         when(animalRepository.findById("animalInexistente")).thenReturn(Optional.empty());

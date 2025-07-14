@@ -52,22 +52,23 @@ public class SecurityConfigurations {
             "/projectvet/animal/search",
             "/projectvet/animal/searchAll",
             "/projectvet/animal/editAnimal",
-            "/images/**"
+            "/projectvet/animal/register",
+            "/images/**",
+            "/projectvet/appointments/**"//só para teste, manda email para mim mesmo que é adm
     };
 
     // Só podem ser acessador por usuários cliente
     public static final String[] ENDPOINTS_CUSTOMER = {
-            "/projectvet/appointments/**",
-            "/projectvet/animal/register"
     };
 
     // Só podem ser acessador por usuários administradores
     public static final String[] ENDPOINTS_ADMIN = {
             "/projectvet/animal/**",
-            "/projectvet/appointments/**", //para teste
-            "/projectvet/clinical-records/**"
+            "/projectvet/appointments/pending",
+            "/projectvet/clinical-records/**",
+            "/projectvet/appointments/*/confirm",
+            "/projectvet/appointments/*/reject",
     };
-
 
 
     @Bean
@@ -79,14 +80,14 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
                         .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
-                        .requestMatchers(ENDPOINTS_ADMIN).hasRole("MANAGER")
                         .requestMatchers(ENDPOINTS_CUSTOMER).hasRole("CLIENT")
+                        .requestMatchers(ENDPOINTS_ADMIN).hasRole("MANAGER")
                         .anyRequest().denyAll())
-
 
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

@@ -10,9 +10,11 @@ import com.project.model.repositorys.AppointmentRepository;
 import com.project.model.repositorys.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +37,11 @@ public class AppointmentService {
     @Value("${spring.mail.username}")
     private String adminEmail;
 
-    public Appointment requestAppointment(AppointmentDTO data) {
-        Usuario user = usuarioRepository.findByEmail(data.userEmail().or);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+
+
+    public String requestAppointment(AppointmentDTO data) {
+        UserDetails user = usuarioRepository.findByEmail(data.userEmail());
         if (user == null) {
             throw new RuntimeException("Usuário não encontrado");
         }
@@ -45,18 +50,19 @@ public class AppointmentService {
                 .orElseThrow(() -> new RuntimeException("Animal não encontrado"));
 
         Appointment appointment = new Appointment();
-        appointment.setUserEmail(user);
+        appointment.setUserEmail((Usuario) user);
         appointment.setRequestedDateTime(data.requestedDateTime());
-        appointment.setAnimalRg(animal);
+        appointment.setAnimalAppointment(animal);
         appointment.setStatus(AppointmentStatus.PENDING);
         appointment.setServiceDetails(data.serviceDetails());
         appointment.setServicePet(data.servicePet());
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
+        String formatted = data.requestedDateTime().format(formatter);
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("userEmail", data.userEmail());
-        properties.put("requestedDateTime", data.requestedDateTime());
+        properties.put("requestedDateTime", formatted);
         properties.put("appointmentId", savedAppointment.getId());
 
         emailService.enviarEmailTemplate(
@@ -65,7 +71,7 @@ public class AppointmentService {
                 properties
         );
 
-        return savedAppointment;
+        return "Solicitação enviada, aguarde confirmação";
     }
 
     public Appointment confirmAppointment(String appointmentId, LocalDateTime confirmedDateTime, String adminNotes) {
@@ -79,8 +85,8 @@ public class AppointmentService {
         Appointment updatedAppointment = appointmentRepository.save(appointment);
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put("confirmedDateTime", confirmedDateTime.toString());
-        properties.put("adminNotes", adminNotes != null ? adminNotes : "");
+        properties.put("confirmedDateTime", confirmedDateTime.format(formatter));
+        properties.put("adminNotes", "");
 
         emailService.enviarEmailTemplate(
                 appointment.getUserEmail().getEmail(),

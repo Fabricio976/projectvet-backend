@@ -1,5 +1,6 @@
 package com.project.controllers;
 
+import com.project.model.dto.AppointmentConfirmationDTO;
 import com.project.model.dto.AppointmentDTO;
 import com.project.model.entitys.Appointment;
 import com.project.model.entitys.Usuario;
@@ -20,17 +21,19 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @PostMapping
-    public ResponseEntity<Appointment> requestAppointment(@RequestBody AppointmentDTO dto) {
-        return ResponseEntity.ok(appointmentService.requestAppointment(dto));
+    @PostMapping("/solicitar")
+    public ResponseEntity<String> requestAppointment(@RequestBody AppointmentDTO dto) {
+        String response = appointmentService.requestAppointment(dto);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{id}/confirm")
     public ResponseEntity<Appointment> confirmAppointment(
             @PathVariable String id,
-            @RequestParam LocalDateTime confirmedDateTime,
-            @RequestParam(required = false) String adminNotes) {
-        return ResponseEntity.ok(appointmentService.confirmAppointment(id, confirmedDateTime, adminNotes));
+            @RequestBody AppointmentConfirmationDTO dto) {
+        return ResponseEntity.ok(
+                appointmentService.confirmAppointment(id, dto.confirmedDateTime(), dto.adminNotes())
+        );
     }
 
     @PostMapping("/{id}/reject")
