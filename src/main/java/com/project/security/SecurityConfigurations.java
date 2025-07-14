@@ -35,8 +35,7 @@ import java.util.stream.Collectors;
 public class SecurityConfigurations {
 
     @Autowired
-    private final SecurityFilter securityFilter;
-    private final String jwtSecret;
+    private SecurityFilter securityFilter;
 
     //  Não requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
@@ -58,20 +57,17 @@ public class SecurityConfigurations {
 
     // Só podem ser acessador por usuários cliente
     public static final String[] ENDPOINTS_CUSTOMER = {
-            "/projectvet/appointments/**"
+            "/projectvet/appointments/**",
+            "/projectvet/animal/register"
     };
 
     // Só podem ser acessador por usuários administradores
     public static final String[] ENDPOINTS_ADMIN = {
             "/projectvet/animal/**",
+            "/projectvet/appointments/**", //para teste
             "/projectvet/clinical-records/**"
     };
 
-
-    public SecurityConfigurations(SecurityFilter securityFilter, @Value("${api.security.token.secret}") String jwtSecret) {
-        this.securityFilter = securityFilter;
-        this.jwtSecret = jwtSecret;
-    }
 
 
     @Bean
