@@ -39,7 +39,6 @@ public class AppointmentService {
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
 
-
     public String requestAppointment(AppointmentDTO data) {
         UserDetails user = usuarioRepository.findByEmail(data.userEmail());
         if (user == null) {
@@ -119,12 +118,5 @@ public class AppointmentService {
         return updatedAppointment;
     }
 
-    public List<Appointment> getPendingAppointments() {
-        return appointmentRepository.findByStatus(AppointmentStatus.PENDING);
-    }
-
-    public List<Appointment> getUserAppointments(Usuario userEmail) {
-        return appointmentRepository.findByUserEmail(userEmail);
-    }
 
 }

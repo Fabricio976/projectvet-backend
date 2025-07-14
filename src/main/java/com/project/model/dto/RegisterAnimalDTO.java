@@ -9,6 +9,5 @@ public record RegisterAnimalDTO(
         String race,
         String specie,
         String responsible,
-        String photoUrl,
-        ServicePet servicePet
+        String photoUrl
 ) { }

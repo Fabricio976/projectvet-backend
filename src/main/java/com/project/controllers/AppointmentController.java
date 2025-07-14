@@ -27,7 +27,7 @@ public class AppointmentController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{id}/confirm")
+    @PostMapping("/confirm/{id}")
     public ResponseEntity<Appointment> confirmAppointment(
             @PathVariable String id,
             @RequestBody AppointmentConfirmationDTO dto) {
@@ -36,20 +36,11 @@ public class AppointmentController {
         );
     }
 
-    @PostMapping("/{id}/reject")
+    @PostMapping("/reject/{id}")
     public ResponseEntity<Appointment> rejectAppointment(
             @PathVariable String id,
             @RequestParam(required = false) String adminNotes) {
         return ResponseEntity.ok(appointmentService.rejectAppointment(id, adminNotes));
     }
 
-    @GetMapping("/pending")
-    public ResponseEntity<List<Appointment>> getPendingAppointments() {
-        return ResponseEntity.ok(appointmentService.getPendingAppointments());
-    }
-
-    @GetMapping("/user")
-    public ResponseEntity<List<Appointment>> getUserAppointments(@AuthenticationPrincipal Usuario user) {
-        return ResponseEntity.ok(appointmentService.getUserAppointments(user));
-    }
 }

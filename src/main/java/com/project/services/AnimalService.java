@@ -71,7 +71,6 @@ public class AnimalService {
                 .race(animalDTO.race())
                 .specie(animalDTO.specie())
                 .photoUrl(animalDTO.photoUrl() != null ? animalDTO.photoUrl() : "")
-                .servicePet(animalDTO.servicePet())
                 .dateRegister(new Date())
                 .rg(generateUniqueRg())
                 .build();
@@ -95,7 +94,6 @@ public class AnimalService {
             existing.setSpecie(animal.getSpecie());
             existing.setRace(animal.getRace());
             existing.setAge(animal.getAge());
-            existing.setServicePet(animal.getServicePet());
         });
 
         animalRepository.saveAndFlush(existingAnimal);
@@ -105,6 +103,5 @@ public class AnimalService {
     public void excluir(String id) {
         animalRepository.deleteById(id);
     }
-
 
 }
