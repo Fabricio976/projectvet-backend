@@ -75,7 +75,7 @@ public class AnimalController {
         return ResponseEntity.ok().body(Map.of("message", result));
     }
 
-    @PutMapping("/editAnimal/{id}")
+    @PatchMapping("/editAnimal/{id}")
     public ResponseEntity<Map<String, String>> editAnimal(@PathVariable String id, @RequestBody Animal animal) {
         Optional.ofNullable(animal)
                 .filter(a -> id.equals(a.getId()))
