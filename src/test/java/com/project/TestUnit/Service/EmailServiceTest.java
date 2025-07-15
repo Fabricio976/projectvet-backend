@@ -1,15 +1,10 @@
 package com.project.TestUnit.Service;
 
-import com.project.model.exeptions.EmailException;
 import com.project.model.exeptions.TemplateProcessingException;
 import com.project.services.EmailService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import jakarta.mail.BodyPart;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Multipart;
-import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,10 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,7 +48,7 @@ public class EmailServiceTest {
 
     @Test
     void testEnviarEmailTextoSucesso() {
-        String resultado = emailService.enviarEmailTexto("dest@exemplo.com", "Assunto", "Mensagem");
+        String resultado = emailService.enviarEmailTexto("test@exemplo.com", "Assunto", "Mensagem");
         assertEquals("Email enviado", resultado);
         verify(javaMailSender).send(any(SimpleMailMessage.class));
     }
@@ -63,17 +56,17 @@ public class EmailServiceTest {
     @Test
     void testEnviarEmailTextoErro() {
         doThrow(new MailException("Erro") {}).when(javaMailSender).send(any(SimpleMailMessage.class));
-        String resultado = emailService.enviarEmailTexto("dest@exemplo.com", "Assunto", "Mensagem");
+        String resultado = emailService.enviarEmailTexto("test@exemplo.com", "Assunto", "Mensagem");
         assertEquals("Erro ao enviar o email", resultado);
         verify(javaMailSender).send(any(SimpleMailMessage.class));
     }
 
     @ParameterizedTest
     @CsvSource({
-            "Nova Solicitação,appointment_request.ftl",
-            "Confirmação da Consulta,appointment_confirmation.ftl",
-            "Rejeição de Agendamento,appointment_rejection.ftl",
-            "Outro Assunto,recuperacao-codigo.ftl"
+            "Nova Solicitação de Consulta, appointment-request.ftl",
+            "Confirmação de Agendamento, appointment-confirmation.ftl",
+            "Rejeição de Solicitação, appointment-rejection.ftl",
+            "Código de Recuperação, recuperacao-codigo.ftl"
     })
     void testEnviarEmailTemplateEscolhaDeTemplate(String titulo, String templateEsperado) throws Exception {
         MimeMessage mimeMessage = mock(MimeMessage.class);
@@ -86,9 +79,9 @@ public class EmailServiceTest {
             mocked.when(() -> FreeMarkerTemplateUtils.processTemplateIntoString(eq(template), eq(props)))
                     .thenReturn("<html>email</html>");
 
-            String retorno = emailService.enviarEmailTemplate("dest@exemplo.com", titulo, props);
+            String retorno = emailService.enviarEmailTemplate("test@exemplo.com", titulo, props);
 
-            assertEquals("dest@exemplo.com", retorno);
+            assertEquals("test@exemplo.com", retorno);
             verify(fmConfiguration).getTemplate(templateEsperado);
             verify(javaMailSender).send(any(MimeMessage.class));
         }

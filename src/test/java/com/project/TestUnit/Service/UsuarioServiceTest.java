@@ -19,7 +19,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Date;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,8 +49,8 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void testRegisterUserSuccess() {
-        RegisterUserDTO dto = new RegisterUserDTO("Nome", "email@teste.com", "senha123", "12345678900",RoleName.ROLE_CLIENT, "83 1234-4123", "rua");
+    void testRegisterUser_Success() {
+        RegisterUserDTO dto = new RegisterUserDTO("Nome", "email@teste.com", "senha123", "12345678900",RoleName.ROLE_CLIENT, "Rua", "83 1234-4123");
 
         when(userRepository.findByEmail(dto.email())).thenReturn(null);
 
@@ -68,7 +67,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void testRegisterManagerSuccess() {
+    void testRegisterManager_Success() {
         RegisterUserDTO dto = new RegisterUserDTO("Gerente", "gerente@teste.com", "senha123", "32165498700", RoleName.ROLE_MANAGER, "Rua", "83 1234-4123");
         when(userRepository.findByEmail(dto.email())).thenReturn(null);
 
@@ -77,7 +76,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void testRequestRecoveryCodeSuccess() {
+    void testRequestRecoveryCode_Success() {
         Usuario user = new Usuario();
         when(userRepository.findByEmail("email@teste.com")).thenReturn(user);
         when(managerAdmin.solicitarCodigo("email@teste.com")).thenReturn("123456");
@@ -87,14 +86,14 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void testRequestRecoveryCodeEmailNotFound() {
+    void testSolicitarRecuperação_CodeEmailNotFound() {
         when(userRepository.findByEmail("naoexiste@teste.com")).thenReturn(null);
 
         assertThrows(EmailNotFoundException.class, () -> usuarioService.requestRecoveryCode("naoexiste@teste.com"));
     }
 
     @Test
-    void testChangePasswordSuccess() {
+    void testMudarSenha_Success() {
         Usuario user = new Usuario();
         when(managerAdmin.alterarSenha(user)).thenReturn("Senha alterada com sucesso!");
 
@@ -102,9 +101,9 @@ class UsuarioServiceTest {
     }
 
     @Test
-    void testChangePasswordFailure() {
+    void testMudarSenha_Falhou() {
         Usuario user = new Usuario();
-        when(managerAdmin.alterarSenha(user)).thenReturn("Erro interno");
+        when(managerAdmin.alterarSenha(user)).thenReturn("Erro interno!");
 
         assertThrows(RuntimeException.class, () -> usuarioService.changePassword(user));
     }

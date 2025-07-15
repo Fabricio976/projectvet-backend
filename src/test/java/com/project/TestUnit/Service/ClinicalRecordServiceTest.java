@@ -1,6 +1,5 @@
 package com.project.TestUnit.Service;
 
-
 import com.project.model.dto.ClinicalRecordDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.entitys.ClinicalRecord;
@@ -11,9 +10,11 @@ import com.project.model.repositorys.ClinicalRecordRepository;
 import com.project.services.ClinicalRecordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
 import java.util.Optional;
@@ -22,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class ClinicalRecordServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class ClinicalRecordServiceTest {
 
     @Mock
     private AnimalRepository animalRepository;
@@ -33,76 +35,145 @@ class ClinicalRecordServiceTest {
     @InjectMocks
     private ClinicalRecordService clinicalRecordService;
 
+    private ClinicalRecordDTO clinicalRecordDTO;
+    private Animal animal;
+    private ClinicalRecord clinicalRecord;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        Integer rg = 12345678;
+        Date consultationDate = new Date();
+        String description = "Consulta para check-up geral";
+
+        clinicalRecordDTO = new ClinicalRecordDTO(rg, consultationDate, description);
+
+        animal = new Animal();
+        animal.setRg(rg);
+
+        clinicalRecord = new ClinicalRecord();
+        clinicalRecord.setId("1");
+        clinicalRecord.setAnimal(animal);
+        clinicalRecord.setConsultationDate(consultationDate);
+        clinicalRecord.setDescription(description);
     }
 
     @Test
-    void testCreateRecordSuccess() {
-        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
-        Animal animal = new Animal();
-        when(animalRepository.findById("animal123")).thenReturn(Optional.of(animal));
+    void createRecord_Success() {
+        when(animalRepository.findByRg(clinicalRecordDTO.rg())).thenReturn(Optional.of(animal));
+        when(clinicalRecordRepository.save(any(ClinicalRecord.class))).thenReturn(clinicalRecord);
 
-        String result = clinicalRecordService.createRecord(dto);
+        ArgumentCaptor<ClinicalRecord> recordCaptor = ArgumentCaptor.forClass(ClinicalRecord.class);
+
+        String result = clinicalRecordService.createRecord(clinicalRecordDTO);
 
         assertEquals("Ficha registrada com sucesso!", result);
-        verify(clinicalRecordRepository).save(any(ClinicalRecord.class));
+        verify(animalRepository).findByRg(clinicalRecordDTO.rg());
+        verify(clinicalRecordRepository).save(recordCaptor.capture());
+
+        ClinicalRecord savedRecord = recordCaptor.getValue();
+        assertEquals(animal, savedRecord.getAnimal());
+        assertEquals(clinicalRecordDTO.consultationDate(), savedRecord.getConsultationDate());
+        assertEquals(clinicalRecordDTO.description(), savedRecord.getDescription());
     }
 
     @Test
-    void testCreateRecordAnimalNotFound() {
-        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
-        when(animalRepository.findById("animal112")).thenReturn(Optional.empty());
+    void createRecord_AnimalNaoEncontrado_RetornaAnimalNotFoundException() {
+        when(animalRepository.findByRg(clinicalRecordDTO.rg())).thenReturn(Optional.empty());
 
-        assertThrows(AnimalNotFoundException.class, () -> clinicalRecordService.createRecord(dto));
-        verify(clinicalRecordRepository, never()).save(any());
+        AnimalNotFoundException exception = assertThrows(AnimalNotFoundException.class, () -> {
+            clinicalRecordService.createRecord(clinicalRecordDTO);
+        });
+
+        assertEquals("Animal não encontrado", exception.getMessage());
+        verify(animalRepository).findByRg(clinicalRecordDTO.rg());
+        verify(clinicalRecordRepository, never()).save(any(ClinicalRecord.class));
     }
 
     @Test
-    void testUpdateRecordSuccess() {
-        ClinicalRecord record = new ClinicalRecord();
-        record.setId("rec123");
+    void updateRecord_Success() {
+        String id = "1";
+        Integer newRg = 87654321;
+        Date newConsultationDate = new Date();
+        String newDescription = "Consulta atualizada";
+        ClinicalRecordDTO newDto = new ClinicalRecordDTO(newRg, newConsultationDate, newDescription);
 
-        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
-        Animal animal = new Animal();
+        Animal newAnimal = new Animal();
+        newAnimal.setRg(newRg);
 
-        when(clinicalRecordRepository.findById("rec123")).thenReturn(Optional.of(record));
-        when(animalRepository.findById("animal123")).thenReturn(Optional.of(animal));
+        when(clinicalRecordRepository.findById(id)).thenReturn(Optional.of(clinicalRecord));
+        when(animalRepository.findByRg(newRg)).thenReturn(Optional.of(newAnimal));
+        when(clinicalRecordRepository.save(any(ClinicalRecord.class))).thenReturn(clinicalRecord);
 
-        String result = clinicalRecordService.updateRecord("rec123", dto);
+        ArgumentCaptor<ClinicalRecord> recordCaptor = ArgumentCaptor.forClass(ClinicalRecord.class);
+
+        String result = clinicalRecordService.updateRecord(id, newDto);
 
         assertEquals("Ficha atualizada com sucesso!", result);
-        assertEquals(animal, record.getAnimal());
-        assertEquals("Atualizado", record.getDescription());
-        verify(clinicalRecordRepository).save(record);
-    }
+        verify(clinicalRecordRepository).findById(id);
+        verify(animalRepository).findByRg(newRg);
+        verify(clinicalRecordRepository).save(recordCaptor.capture());
 
-
-    @Test
-    void testUpdateRecordNotFound() {
-        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
-        when(clinicalRecordRepository.findById("na")).thenReturn(Optional.empty());
-
-        assertThrows(ClinicalRecordNotFoundException.class, () -> clinicalRecordService.updateRecord("inexistente", dto));
+        ClinicalRecord updatedRecord = recordCaptor.getValue();
+        assertEquals(newAnimal, updatedRecord.getAnimal());
+        assertEquals(newConsultationDate, updatedRecord.getConsultationDate());
+        assertEquals(newDescription, updatedRecord.getDescription());
     }
 
     @Test
-    void testUpdateRecordAnimalNotFound() {
-        ClinicalRecord record = new ClinicalRecord();
-        record.setId("rec123");
-        ClinicalRecordDTO dto = new ClinicalRecordDTO(123, new Date(),"Atualizado");
+    void recordClinicalRecordNaoEncontrada_RetornaClinicalRecordNotFoundException() {
+        String id = "1";
+        when(clinicalRecordRepository.findById(id)).thenReturn(Optional.empty());
 
-        when(clinicalRecordRepository.findById("rec123")).thenReturn(Optional.of(record));
-        when(animalRepository.findById("animalInexistente")).thenReturn(Optional.empty());
+        ClinicalRecordNotFoundException exception = assertThrows(ClinicalRecordNotFoundException.class, () -> {
+            clinicalRecordService.updateRecord(id, clinicalRecordDTO);
+        });
 
-        assertThrows(AnimalNotFoundException.class, () -> clinicalRecordService.updateRecord("rec123", dto));
+        assertEquals("Ficha clínica não encontrada", exception.getMessage());
+        verify(clinicalRecordRepository).findById(id);
+        verify(animalRepository, never()).findByRg(anyInt());
+        verify(clinicalRecordRepository, never()).save(any(ClinicalRecord.class));
     }
-    @Test
-    void testDeleteRecordNotFound() {
-        when(clinicalRecordRepository.findById("rec123")).thenReturn(Optional.empty());
 
-        assertThrows(ClinicalRecordNotFoundException.class, () -> clinicalRecordService.deleteRecord("rec123"));
-        verify(clinicalRecordRepository, never()).deleteById(any());
+    @Test
+    void recordAnimalNaoEncontrado_RetornaAnimalNotFoundException() {
+        String id = "1";
+        when(clinicalRecordRepository.findById(id)).thenReturn(Optional.of(clinicalRecord));
+        when(animalRepository.findByRg(clinicalRecordDTO.rg())).thenReturn(Optional.empty());
+
+        AnimalNotFoundException exception = assertThrows(AnimalNotFoundException.class, () -> {
+            clinicalRecordService.updateRecord(id, clinicalRecordDTO);
+        });
+
+        assertEquals("Animal não encontrado", exception.getMessage());
+        verify(clinicalRecordRepository).findById(id);
+        verify(animalRepository).findByRg(clinicalRecordDTO.rg());
+        verify(clinicalRecordRepository, never()).save(any(ClinicalRecord.class));
+    }
+
+    // Testes para deleteRecord
+    @Test
+    void deleteRecord_Success() {
+        String id = "1";
+        when(clinicalRecordRepository.findById(id)).thenReturn(Optional.of(clinicalRecord));
+
+        String result = clinicalRecordService.deleteRecord(id);
+
+        assertEquals("Ficha excluída com sucesso!", result);
+        verify(clinicalRecordRepository).findById(id);
+        verify(clinicalRecordRepository).delete(clinicalRecord);
+    }
+
+    @Test
+    void deleteRecordClinicalRecordNaoEncontrado_RetornaClinicalRecordNotFoundException() {
+        String id = "1";
+        when(clinicalRecordRepository.findById(id)).thenReturn(Optional.empty());
+
+        ClinicalRecordNotFoundException exception = assertThrows(ClinicalRecordNotFoundException.class, () -> {
+            clinicalRecordService.deleteRecord(id);
+        });
+
+        assertEquals("Ficha clínica não encontrada", exception.getMessage());
+        verify(clinicalRecordRepository).findById(id);
+        verify(clinicalRecordRepository, never()).delete(any(ClinicalRecord.class));
     }
 }

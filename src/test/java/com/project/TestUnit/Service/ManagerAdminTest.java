@@ -40,16 +40,13 @@ public class ManagerAdminTest {
     }
 
     @Test
-    void testSolicitarCodigoSucesso() {
-        // Arrange
+    void testSolicitarCodigo_Sucesso() {
         String email = "teste@exemplo.com";
         when(userRepository.findByEmail(email)).thenReturn(usuario);
         when(emailService.enviarEmailTexto(anyString(), anyString(), anyString())).thenReturn("Email enviado");
 
-        // Act
         String resultado = managerAdmin.solicitarCodigo(email);
 
-        // Assert
         assertEquals("Codigo enviado para o seu e-mail", resultado);
         verify(userRepository, times(1)).saveAndFlush(usuario);
         verify(emailService, times(1)).enviarEmailTexto(eq(email), eq("Código de Recuperação de Senha"), anyString());
@@ -58,13 +55,12 @@ public class ManagerAdminTest {
     }
 
     @Test
-    void testAlterarSenhaSucesso() {
-        // Arrange
+    void testAlterarSenha_Sucesso() {
         String email = "teste@exemplo.com";
         String codigo = "1234ABCD";
         String novaSenha = "novaSenha123";
         usuario.setCodeRecoveryPassword(codigo);
-        usuario.setDateShippingCodigo(new Date(System.currentTimeMillis() - 300_000)); // 5 minutos atrás
+        usuario.setDateShippingCodigo(new Date(System.currentTimeMillis() - 300_000)); // 5min max
 
         when(userRepository.findByEmailAndCodeRecoveryPassword(email, codigo)).thenReturn(usuario);
         when(passwordEncoder.encode(novaSenha)).thenReturn("senhaCriptografada");
@@ -74,10 +70,9 @@ public class ManagerAdminTest {
         userInput.setCodeRecoveryPassword(codigo);
         userInput.setPassword(novaSenha);
 
-        // Act
         String resultado = managerAdmin.alterarSenha(userInput);
 
-        // Assert
+
         assertEquals("Senha alterada com sucesso!", resultado);
         verify(userRepository, times(1)).saveAndFlush(usuario);
         assertEquals("senhaCriptografada", usuario.getPassword());
@@ -85,12 +80,11 @@ public class ManagerAdminTest {
     }
 
     @Test
-    void testAlterarSenhaCodigoExpirado() {
-        // Arrange
+    void testAlterarSenha_CodigoExpirado() {
         String email = "teste@exemplo.com";
         String codigo = "1234ABCD";
         usuario.setCodeRecoveryPassword(codigo);
-        usuario.setDateShippingCodigo(new Date(System.currentTimeMillis() - 1_000_000)); // Mais de 15 minutos
+        usuario.setDateShippingCodigo(new Date(System.currentTimeMillis() - 1_000_000)); // mais de 15min
 
         when(userRepository.findByEmailAndCodeRecoveryPassword(email, codigo)).thenReturn(usuario);
 
@@ -99,17 +93,14 @@ public class ManagerAdminTest {
         userInput.setCodeRecoveryPassword(codigo);
         userInput.setPassword("novaSenha123");
 
-        // Act
         String resultado = managerAdmin.alterarSenha(userInput);
 
-        // Assert
         assertEquals("Tempo expirado, solicite um novo código", resultado);
         verify(userRepository, never()).saveAndFlush(any());
     }
 
     @Test
-    void testAlterarSenhaUsuarioNaoEncontrado() {
-        // Arrange
+    void testAlterarSenha_EmailNaoEncontrado() {
         String email = "teste@exemplo.com";
         String codigo = "1234ABCD";
 
@@ -120,10 +111,8 @@ public class ManagerAdminTest {
         userInput.setCodeRecoveryPassword(codigo);
         userInput.setPassword("novaSenha123");
 
-        // Act
         String resultado = managerAdmin.alterarSenha(userInput);
 
-        // Assert
         assertEquals("E-mail ou código de recuperação incorretos ou inesistentes!", resultado);
         verify(userRepository, never()).saveAndFlush(any());
     }

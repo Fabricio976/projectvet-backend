@@ -12,7 +12,7 @@ public class TestUtils {
     public static UsuarioInfo criarUsuarioValido(String role) {
         String cpf = gerarCpfValido();
         String email = gerarEmailAleatorio();
-        String senha = "123456"; // senha padrão para teste
+        String senha = "123456";
 
         Map<String, Object> request = Map.of(
                 "name", "Usuário Teste",
