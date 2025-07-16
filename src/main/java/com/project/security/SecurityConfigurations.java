@@ -12,23 +12,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -37,11 +29,10 @@ public class SecurityConfigurations {
     @Autowired
     private SecurityFilter securityFilter;
 
-    //  Não requerem autenticação para serem acessados
+    // Não requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/projectvet/login",
-            "/projectvet/register/manager",
-            "/projectvet/register/client",
+            "/projectvet/register/**",
             "/projectvet/code-forgot",
             "/projectvet/verify-code",
             "/projectvet/change-password"
@@ -59,6 +50,8 @@ public class SecurityConfigurations {
 
     // Só podem ser acessador por usuários cliente
     public static final String[] ENDPOINTS_CUSTOMER = {
+            "/projectvet/animal/register",
+            "/projectvet/animal/editAnimal/*",
     };
 
     // Só podem ser acessador por usuários administradores
@@ -66,8 +59,8 @@ public class SecurityConfigurations {
             "/projectvet/animal/**",
             "/projectvet/appointments/pending",
             "/projectvet/clinical-records/**",
-            "/projectvet/appointments/*/confirm",
-            "/projectvet/appointments/*/reject",
+            "/projectvet/appointments/confirm/*",
+            "/projectvet/appointments/reject/*",
     };
 
 
