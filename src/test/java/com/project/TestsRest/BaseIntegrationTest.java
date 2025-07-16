@@ -35,11 +35,11 @@ public abstract class BaseIntegrationTest {
         RestAssured.port = port;
         RestAssured.basePath = "/projectvet";
 
-        setupClient();
-        setupManager();
+        registerClient();
+        registerManager();
     }
 
-    protected void setupClient() {
+    protected void registerClient() {
         String clientEmail = "client_" + UUID.randomUUID() + "@example.com";
         clientCpf = generateUniqueCpf();
         RegisterUserDTO clientDTO = new RegisterUserDTO(
@@ -66,7 +66,7 @@ public abstract class BaseIntegrationTest {
                 .path("token");
     }
 
-    protected void setupManager() {
+    protected void registerManager() {
         String managerEmail = "manager_" + UUID.randomUUID() + "@example.com";
         managerCpf = generateUniqueCpf();
         RegisterUserDTO managerDTO = new RegisterUserDTO(

@@ -15,9 +15,9 @@ import static org.hamcrest.Matchers.*;
 public class AnimalIntegrationTest extends BaseIntegrationTest {
 
     @Test
-    public void shouldRegisterAnimalSuccessfully() {
+    public void registerAnimal_Success() {
         RegisterAnimalDTO animalDTO = new RegisterAnimalDTO(
-                "Buddy",3,"Dog",  "Labrador", clientCpf,  null
+                "Buddy", 3, "Dog", "Labrador", clientCpf, null
         );
 
         given()
@@ -32,12 +32,11 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void shouldListOnlyOwnAnimalsForClient() {
+    public void listPorClient() {
         RegisterAnimalDTO animalDTO = new RegisterAnimalDTO(
-                "Poodle", 2, "Max", clientCpf, "Dog", null
+                "Toto", 2, "Poodle", "Dog", clientCpf, null
         );
 
-        // Registra animal
         given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + clientToken)
@@ -55,15 +54,15 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .get("/animal/searchAll?page=0&size=5")
                 .then()
                 .statusCode(200)
-                .body("totalElements", greaterThanOrEqualTo(1))
-                .body("content.name", hasItem("Max"));
+                .body("page.totalElements", greaterThanOrEqualTo(1))
+                .body("content.name", hasItem("Toto"));
     }
 
     @Test
-    public void shouldListAllAnimalsForManager() {
-        // 1. Registra animal para cliente existente
+    public void listAllAnimals_ParaManager() {
+        // Registra animal para cliente existente
         RegisterAnimalDTO animal1 = new RegisterAnimalDTO(
-                "Golden", 4, "Bella",  "Dog", clientCpf,null
+                "Juarez", 4, "Golden", "Dog", clientCpf, null
         );
 
         given()
@@ -75,12 +74,12 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .then()
                 .statusCode(200);
 
-        // 2. Registra novo cliente + animal
+        // Registra novo cliente + animal
         String anotherEmail = "another_" + UUID.randomUUID() + "@example.com";
         String anotherCpf = generateUniqueCpf();
 
         RegisterUserDTO newClient = new RegisterUserDTO(
-                "Another Client", anotherEmail, "password123", anotherCpf, RoleName.ROLE_CLIENT, "Rua Nova", "999888777"
+                "Client 2", anotherEmail, "password123", anotherCpf, RoleName.ROLE_CLIENT, "Rua Nova", "999888777"
         );
 
         // Cadastro
@@ -106,7 +105,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
 
         // Registra animal para novo cliente
         RegisterAnimalDTO animal2 = new RegisterAnimalDTO(
-                "Siamese", 1, "Luna",  "Cat", anotherCpf,null
+                "Luna", 1, "Siamese", "Cat", anotherCpf, null
         );
 
         given()
@@ -118,7 +117,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .then()
                 .statusCode(200);
 
-        // 3. Lista como gerente (espera ver todos)
+        // Lista como adm (espera ver todos)
         given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + managerToken)
@@ -126,7 +125,34 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .get("/animal/searchAll?page=0&size=10")
                 .then()
                 .statusCode(200)
-                .body("totalElements", greaterThanOrEqualTo(2))
-                .body("content.name", hasItems("Bella", "Luna"));
+                .body("page.totalElements", greaterThanOrEqualTo(2))
+                .body("content.name", hasItems("Juarez", "Luna"));
     }
+
+    @Test
+    public void listAnimal_ByCpf() {
+        RegisterAnimalDTO animalDTO = new RegisterAnimalDTO(
+                "Jurubeba", 2, "Poodle", "Dog", clientCpf, null
+        );
+
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + clientToken)
+                .body(animalDTO)
+                .when()
+                .post("/animal/register")
+                .then()
+                .statusCode(200);
+
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .when()
+                .get("/animal/searchByUserCpf/" + clientCpf)
+                .then()
+                .statusCode(200)
+                .body("name", hasItem("Jurubeba"));
+    }
+
+
 }
