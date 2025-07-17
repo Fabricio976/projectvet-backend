@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import com.project.model.dto.RegisterAnimalDTO;
+import com.project.model.dto.AnimalDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.entitys.Usuario;
 import com.project.model.exeptions.CpfNotFoundException;
@@ -59,7 +59,7 @@ public class AnimalService {
                 .orElseThrow(() -> new RgNotFoundException("Não existe animal cadastrado com esse RG: " + rg));
     }
 
-    public String registerAnimal(RegisterAnimalDTO animalDTO) {
+    public String registerAnimal(AnimalDTO animalDTO) {
         String cpf = animalDTO.responsible();
         Usuario usuario = Optional.ofNullable(userRepository.findByCpf(cpf))
                 .orElseThrow(() -> new CpfNotFoundException("CPF não encontrado"));

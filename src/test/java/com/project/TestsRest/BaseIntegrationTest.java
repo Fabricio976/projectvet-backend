@@ -93,6 +93,7 @@ public abstract class BaseIntegrationTest {
                 .path("token");
     }
 
+
     protected String generateUniqueCpf() {
 
         Random random = new Random();

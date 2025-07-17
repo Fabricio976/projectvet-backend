@@ -1,6 +1,6 @@
 package com.project.TestUnit.Service;
 
-import com.project.model.dto.RegisterAnimalDTO;
+import com.project.model.dto.AnimalDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.entitys.Usuario;
 import com.project.model.exeptions.AnimalNotFoundException;
@@ -40,7 +40,7 @@ class AnimalServiceTest {
 
     private Animal animal;
     private Usuario usuario;
-    private RegisterAnimalDTO animalDTO;
+    private AnimalDTO animalDTO;
     private Pageable pageable;
 
     @BeforeEach
@@ -62,7 +62,7 @@ class AnimalServiceTest {
                 .dateRegister(new Date())
                 .build();
 
-        animalDTO = new RegisterAnimalDTO(
+        animalDTO = new AnimalDTO(
                 "Rex", 5, "Labrador", "Dog", "123.456.789-01", "");
 
         pageable = PageRequest.of(0, 10);

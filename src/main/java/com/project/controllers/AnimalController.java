@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import com.project.model.dto.RegisterAnimalDTO;
+import com.project.model.dto.AnimalDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.repositorys.AnimalRepository;
 import com.project.services.AnimalService;
@@ -37,7 +37,6 @@ public class AnimalController {
     private ResponseEntity<Map<String, String>> response(String message) {
         return ResponseEntity.ok(Map.of("message", message));
     }
-
     @GetMapping("/searchAll")
     public Page<Animal> searchAllAnimals(
             @RequestParam(defaultValue = "0") int page,
@@ -70,7 +69,7 @@ public class AnimalController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerAnimal(@RequestBody @Valid RegisterAnimalDTO data) {
+    public ResponseEntity<?> registerAnimal(@RequestBody @Valid AnimalDTO data) {
         String result = animalService.registerAnimal(data);
         return ResponseEntity.ok().body(Map.of("message", result));
     }

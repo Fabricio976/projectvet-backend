@@ -8,7 +8,7 @@ import com.project.model.exeptions.EmailAlreadyExistsException;
 import com.project.model.exeptions.EmailNotFoundException;
 import com.project.model.exeptions.InvalidRecoveryCodeException;
 import com.project.model.repositorys.UserRepository;
-import com.project.security.SecurityConfigurations;
+import com.project.config.SecurityConfigurations;
 import com.project.services.UsuarioService;
 import com.project.services.details.ManagerAdmin;
 import org.junit.jupiter.api.BeforeEach;

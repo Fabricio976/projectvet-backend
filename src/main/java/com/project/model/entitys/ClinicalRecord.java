@@ -1,5 +1,6 @@
 package com.project.model.entitys;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.model.entitys.enums.ServicePet;
@@ -27,6 +28,7 @@ public class ClinicalRecord {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "animal_rg")
+    @JoinColumn(name = "animal_id")
+    @JsonBackReference
     private Animal animal;
 }

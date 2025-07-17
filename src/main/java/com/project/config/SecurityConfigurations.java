@@ -1,11 +1,8 @@
-package com.project.security;
+package com.project.config;
 
-import com.project.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,10 +37,7 @@ public class SecurityConfigurations {
 
     // Requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
-            "/projectvet/animal/search",
-            "/projectvet/animal/searchAll",
-            "/projectvet/animal/editAnimal",
-            "/projectvet/animal/register",
+            "/projectvet/animal/**",
             "/images/**",
             "/projectvet/appointments/**"//só para teste, manda email para mim mesmo que é adm
     };

@@ -1,9 +1,8 @@
 package com.project.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.model.entitys.enums.ServicePet;
+import com.project.model.entitys.Animal;
 
-public record RegisterAnimalDTO(
+public record AnimalDTO(
         String name,
         int age,
         String race,

@@ -1,6 +1,5 @@
 package com.project.services;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,10 +8,9 @@ import com.project.model.entitys.Role;
 import com.project.model.exeptions.EmailAlreadyExistsException;
 import com.project.model.exeptions.EmailNotFoundException;
 import com.project.model.exeptions.InvalidRecoveryCodeException;
-import com.project.security.SecurityConfigurations;
+import com.project.config.SecurityConfigurations;
 import com.project.services.details.ManagerAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
