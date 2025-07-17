@@ -4,7 +4,7 @@ import com.project.model.entitys.Animal;
 
 public record AnimalDTO(
         String name,
-        int age,
+        Integer age,
         String race,
         String specie,
         String responsible,

@@ -45,7 +45,7 @@ public class SecurityConfigurations {
     // Só podem ser acessador por usuários cliente
     public static final String[] ENDPOINTS_CUSTOMER = {
             "/projectvet/animal/register",
-            "/projectvet/animal/editAnimal/*",
+            "/projectvet/animal/editAnimal",
     };
 
     // Só podem ser acessador por usuários administradores
@@ -53,8 +53,8 @@ public class SecurityConfigurations {
             "/projectvet/animal/**",
             "/projectvet/appointments/pending",
             "/projectvet/clinical-records/**",
-            "/projectvet/appointments/confirm/*",
-            "/projectvet/appointments/reject/*",
+            "/projectvet/appointments/confirm",
+            "/projectvet/appointments/reject",
     };
 
 

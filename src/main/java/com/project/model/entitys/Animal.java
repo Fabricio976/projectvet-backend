@@ -25,7 +25,7 @@ public class Animal {
     @Column(unique = true, nullable = false)
     private Integer rg;
     private String name;
-    private int age;
+    private Integer age;
     private String race;
     private String specie;
 

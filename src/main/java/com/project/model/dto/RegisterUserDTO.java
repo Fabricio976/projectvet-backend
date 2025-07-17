@@ -13,8 +13,6 @@ public record RegisterUserDTO(
         String email,
         String password,
 
-        @CPF(message = "CPF inválido")
-        @NotBlank(message = "CPF é obrigatório")
         String cpf,
         RoleName role,
         String address,

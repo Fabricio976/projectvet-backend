@@ -95,7 +95,6 @@ public class AnimalService {
             existing.setRace(animal.getRace());
             existing.setAge(animal.getAge());
         });
-
         animalRepository.saveAndFlush(existingAnimal);
         return "Editado com Sucesso!";
     }

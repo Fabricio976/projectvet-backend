@@ -76,7 +76,8 @@ public class AnimalController {
 
     @PatchMapping("/editAnimal/{id}")
     public ResponseEntity<Map<String, String>> editAnimal(@PathVariable String id, @RequestBody Animal animal) {
-        Optional.ofNullable(animal)
+        animal.setId(id);
+        Optional.of(animal)
                 .filter(a -> id.equals(a.getId()))
                 .orElseThrow(() -> new IllegalArgumentException("IDs devem ser iguais"));
 

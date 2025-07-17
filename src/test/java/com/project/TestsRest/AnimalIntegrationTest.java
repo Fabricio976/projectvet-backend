@@ -1,10 +1,7 @@
 package com.project.TestsRest;
 
-import com.project.model.dto.AnimalDTO;
 import com.project.model.dto.RegisterUserDTO;
 import com.project.model.dto.AuthenticationDTO;
-import com.project.model.entitys.Animal;
-import com.project.model.entitys.Usuario;
 import com.project.model.entitys.enums.RoleName;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
@@ -207,7 +204,6 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
 
     @Test
     public void testEdit_Animal() {
-
         Map<String, Object> newAnimal = new HashMap<>();
         String animalId = UUID.randomUUID().toString();
         newAnimal.put("id", animalId);
@@ -220,32 +216,33 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         newAnimal.put("responsible", clientCpf);
         newAnimal.put("dateRegister", new Date().toString());
 
-        given()
+        String idCriat = given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + clientToken)
                 .body(newAnimal)
                 .when()
                 .post("/animal/register")
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .extract()
+                .path("id");
+        System.out.printf("Id: " + idCriat);
 
         // Monta o objeto editado (mesmo ID, mas com novos valores)
         Map<String, Object> updatedAnimal = new HashMap<>();
-        updatedAnimal.put("id", animalId);
+        updatedAnimal.put("id", idCriat);
         updatedAnimal.put("name", "Bolota");
         updatedAnimal.put("age", 4);
-        updatedAnimal.put("race", "Poodle");
+        updatedAnimal.put("race", "BulDog");
         updatedAnimal.put("specie", "Dog");
 
         // Esse "responsible" pode ser necessário para validar o campo, mas se não for editado, pode ser omitido
         Map<String, String> responsible = new HashMap<>();
         responsible.put("cpf", clientCpf);
         updatedAnimal.put("responsible", responsible);
-
-        // Requisição PATCH
         given()
                 .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer " + managerToken)
+                .header("Authorization", "Bearer " + clientToken)
                 .body(updatedAnimal)
                 .when()
                 .patch("/animal/editAnimal/" + animalId)
