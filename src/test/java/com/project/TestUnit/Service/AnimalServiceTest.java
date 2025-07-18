@@ -1,7 +1,6 @@
 package com.project.TestUnit.Service;
 
 import com.project.model.dto.AnimalDTO;
-import com.project.model.dto.AnimalResponseDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.entitys.Usuario;
 import com.project.model.exeptions.AnimalNotFoundException;
@@ -43,7 +42,6 @@ class AnimalServiceTest {
     private Usuario usuario;
     private AnimalDTO animalDTO;
     private Pageable pageable;
-    private AnimalResponseDTO animalResponseDTO;
 
     @BeforeEach
     void setUp() {
@@ -63,9 +61,6 @@ class AnimalServiceTest {
                 .responsible(usuario)
                 .dateRegister(new Date())
                 .build();
-
-        animalDTO = new AnimalDTO(
-                "Rex", 5, "Labrador", "Dog", "123.456.789-01", "");
 
         pageable = PageRequest.of(0, 10);
     }

@@ -8,5 +8,4 @@ public record ClinicalRecordDTO(
         Integer rg,
         Date consultationDate,
         String description
-) {
-}
+) { }

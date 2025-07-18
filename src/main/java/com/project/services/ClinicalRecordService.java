@@ -21,7 +21,7 @@ public class ClinicalRecordService {
     @Autowired
     private ClinicalRecordRepository clinicalRecordRepository;
 
-    public String createRecord(ClinicalRecordDTO dto) {
+    public ClinicalRecord createRecord(ClinicalRecordDTO dto) {
         Animal animal = animalRepository.findByRg(dto.rg())
                 .orElseThrow(() -> new AnimalNotFoundException("Animal não encontrado"));
 
@@ -30,8 +30,7 @@ public class ClinicalRecordService {
         record.setConsultationDate(dto.consultationDate());
         record.setDescription(dto.description());
 
-        clinicalRecordRepository.save(record);
-        return "Ficha registrada com sucesso!";
+        return clinicalRecordRepository.save(record);
     }
 
     public String updateRecord(String id, ClinicalRecordDTO dto) {

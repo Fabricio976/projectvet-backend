@@ -1,4 +1,4 @@
-FROM maven:3.9.6-openjdk-21-slim
+FROM maven:3.9.6-eclipse-temurin-21
 
 WORKDIR /app
 

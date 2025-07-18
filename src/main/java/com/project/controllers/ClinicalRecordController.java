@@ -32,8 +32,8 @@ public class ClinicalRecordController {
 
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> create(@RequestBody @Valid ClinicalRecordDTO dto) {
-        String result = clinicalRecordService.createRecord(dto);
-        return ResponseEntity.ok(Map.of("message", result));
+        ClinicalRecord result = clinicalRecordService.createRecord(dto);
+        return ResponseEntity.ok(Map.of("message", "Ficha registrada com sucesso!", "id", result.getId()));
     }
 
     @PatchMapping("/edit/{id}")

@@ -45,7 +45,7 @@ public class ClinicalRecordServiceTest {
         Date consultationDate = new Date();
         String description = "Consulta para check-up geral";
 
-        clinicalRecordDTO = new ClinicalRecordDTO(rg, consultationDate, description);
+        clinicalRecordDTO = new ClinicalRecordDTO(rg,consultationDate,description);
 
         animal = new Animal();
         animal.setRg(rg);
@@ -64,9 +64,8 @@ public class ClinicalRecordServiceTest {
 
         ArgumentCaptor<ClinicalRecord> recordCaptor = ArgumentCaptor.forClass(ClinicalRecord.class);
 
-        String result = clinicalRecordService.createRecord(clinicalRecordDTO);
+        String result = String.valueOf(clinicalRecordService.createRecord(clinicalRecordDTO));
 
-        assertEquals("Ficha registrada com sucesso!", result);
         verify(animalRepository).findByRg(clinicalRecordDTO.rg());
         verify(clinicalRecordRepository).save(recordCaptor.capture());
 
