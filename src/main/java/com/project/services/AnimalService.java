@@ -59,7 +59,7 @@ public class AnimalService {
                 .orElseThrow(() -> new RgNotFoundException("Não existe animal cadastrado com esse RG: " + rg));
     }
 
-    public String registerAnimal(AnimalDTO animalDTO) {
+    public Animal registerAnimal(AnimalDTO animalDTO) {
         String cpf = animalDTO.responsible();
         Usuario usuario = Optional.ofNullable(userRepository.findByCpf(cpf))
                 .orElseThrow(() -> new CpfNotFoundException("CPF não encontrado"));
@@ -75,8 +75,8 @@ public class AnimalService {
                 .rg(generateUniqueRg())
                 .build();
 
-        animalRepository.save(animal);
-        return "Animal Registrado!";
+        return animalRepository.save(animal);
+
     }
 
     public String editRegister(Animal animal) {

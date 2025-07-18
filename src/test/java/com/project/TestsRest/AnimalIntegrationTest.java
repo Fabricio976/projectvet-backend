@@ -1,5 +1,6 @@
 package com.project.TestsRest;
 
+
 import com.project.model.dto.RegisterUserDTO;
 import com.project.model.dto.AuthenticationDTO;
 import com.project.model.entitys.enums.RoleName;
@@ -25,7 +26,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         Map<String, Object> newAnimal = new HashMap<>();
         String animalId = UUID.randomUUID().toString();
         newAnimal.put("id", animalId);
-        newAnimal.put("rg", generateRgStream());
+        newAnimal.put("rg", generateRgStream().findFirst().getAsInt());
         newAnimal.put("name", "Toto");
         newAnimal.put("age", 5);
         newAnimal.put("race", "Puddle");
@@ -42,7 +43,10 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .post("/animal/register")
                 .then()
                 .statusCode(200)
-                .body("message", equalTo("Animal Registrado!"));
+                .body("message", equalTo("Animal registrado com sucesso!"))
+                .body("animal.id", notNullValue())
+                .body("animal.rg", notNullValue())
+                .body("animal.name", notNullValue());
     }
 
     @Test
@@ -50,7 +54,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         Map<String, Object> newAnimal = new HashMap<>();
         String animalId = UUID.randomUUID().toString();
         newAnimal.put("id", animalId);
-        newAnimal.put("rg", generateRgStream());
+        newAnimal.put("rg", generateRgStream().findFirst().getAsInt());
         newAnimal.put("name", "Jurubeba");
         newAnimal.put("age", 5);
         newAnimal.put("race", "Raciado");
@@ -86,7 +90,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         Map<String, Object> animal1 = new HashMap<>();
         String animal1Id = UUID.randomUUID().toString();
         animal1.put("id", animal1Id);
-        animal1.put("rg", generateRgStream());
+        animal1.put("rg", generateRgStream().findFirst().getAsInt());
         animal1.put("name", "Juarez");
         animal1.put("age", 5);
         animal1.put("race", "Labrador");
@@ -137,7 +141,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         Map<String, Object> animal2 = new HashMap<>();
         String animal2Id = UUID.randomUUID().toString();
         animal2.put("id", animal2Id);
-        animal2.put("rg", generateRgStream());
+        animal2.put("rg", generateRgStream().findFirst().getAsInt());
         animal2.put("name", "Luna");
         animal2.put("age", 5);
         animal2.put("race", "Não definida");
@@ -145,6 +149,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         animal2.put("photoUrl", "");
         animal2.put("responsible", anotherCpf);
         animal2.put("dateRegister", new Date().toString());
+
 
         given()
                 .contentType(ContentType.JSON)
@@ -174,7 +179,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         Map<String, Object> newAnimal = new HashMap<>();
         String animalId = UUID.randomUUID().toString();
         newAnimal.put("id", animalId);
-        newAnimal.put("rg", generateRgStream());
+        newAnimal.put("rg", generateRgStream().findFirst().getAsInt());
         newAnimal.put("name", "Rex");
         newAnimal.put("age", 5);
         newAnimal.put("race", "Caramelo");
@@ -207,7 +212,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         Map<String, Object> newAnimal = new HashMap<>();
         String animalId = UUID.randomUUID().toString();
         newAnimal.put("id", animalId);
-        newAnimal.put("rg", generateRgStream());
+        newAnimal.put("rg", generateRgStream().findFirst().getAsInt());
         newAnimal.put("name", "Cleiton");
         newAnimal.put("age", 5);
         newAnimal.put("race", "BulDog");
@@ -225,8 +230,8 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .then()
                 .statusCode(200)
                 .extract()
-                .path("id");
-        System.out.printf("Id: " + idCriat);
+                .path("animal.id");
+
 
         // Monta o objeto editado (mesmo ID, mas com novos valores)
         Map<String, Object> updatedAnimal = new HashMap<>();
@@ -236,30 +241,63 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
         updatedAnimal.put("race", "BulDog");
         updatedAnimal.put("specie", "Dog");
 
-        // Esse "responsible" pode ser necessário para validar o campo, mas se não for editado, pode ser omitido
-        Map<String, String> responsible = new HashMap<>();
-        responsible.put("cpf", clientCpf);
-        updatedAnimal.put("responsible", responsible);
         given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + clientToken)
                 .body(updatedAnimal)
                 .when()
-                .patch("/animal/editAnimal/" + animalId)
+                .patch("/animal/editAnimal/" + idCriat)
                 .then()
                 .statusCode(200)
                 .body("message", equalTo("Editado com Sucesso!"));
+
 
         // Verifica se foi editado corretamente
         given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + managerToken)
                 .when()
-                .get("/animal/search/" + animalId)
+                .get("/animal/search/" + idCriat)
                 .then()
                 .statusCode(200)
-                .body("name", hasItem("Bolota"));
+                .body("name", equalTo("Bolota"));
     }
 
+    @Test
+    public void testSeach_PorRgAnimal() {
+        Map<String, Object> newAnimal = new HashMap<>();
+        String animalId = UUID.randomUUID().toString();
+        newAnimal.put("id", animalId);
+        newAnimal.put("rg", generateRgStream().findFirst().getAsInt());
+        newAnimal.put("name", "Pudim");
+        newAnimal.put("age", 5);
+        newAnimal.put("race", "BulDog");
+        newAnimal.put("specie", "Dog");
+        newAnimal.put("photoUrl", "");
+        newAnimal.put("responsible", clientCpf);
+        newAnimal.put("dateRegister", new Date().toString());
+
+        Integer rgCriat = given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + clientToken)
+                .body(newAnimal)
+                .when()
+                .post("/animal/register")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("animal.rg");
+
+        given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer " + managerToken)
+                .when()
+                .get("/animal/animalRg/" + rgCriat)
+                .then()
+                .statusCode(200)
+                .body("name", equalTo("Pudim"));
+
+
+    }
 
 }

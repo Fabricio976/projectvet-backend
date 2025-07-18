@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.project.model.dto.AnimalResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,8 +19,6 @@ import com.project.model.dto.AnimalDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.repositorys.AnimalRepository;
 import com.project.services.AnimalService;
-
-import jakarta.validation.Valid;
 
 import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
@@ -37,6 +36,7 @@ public class AnimalController {
     private ResponseEntity<Map<String, String>> response(String message) {
         return ResponseEntity.ok(Map.of("message", message));
     }
+
     @GetMapping("/searchAll")
     public Page<Animal> searchAllAnimals(
             @RequestParam(defaultValue = "0") int page,
@@ -69,9 +69,10 @@ public class AnimalController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerAnimal(@RequestBody @Valid AnimalDTO data) {
-        String result = animalService.registerAnimal(data);
-        return ResponseEntity.ok().body(Map.of("message", result));
+    public ResponseEntity<?> registerAnimal(@RequestBody AnimalDTO data) {
+        Animal result = animalService.registerAnimal(data);
+        return ResponseEntity.ok().body(Map.of("message", "Animal registrado com sucesso!",
+                "animal", new AnimalResponseDTO(result.getId(), result.getRg(), result.getName())));
     }
 
     @PatchMapping("/editAnimal/{id}")

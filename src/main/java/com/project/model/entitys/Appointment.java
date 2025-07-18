@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@JsonIgnoreProperties(value = {"requestedDateTime", "serviceDetails", "status", "animalAppointment",
+        "requestedDateTime","adminNotes"
+}, allowGetters = false, allowSetters = true)
 public class Appointment {
 
     @Id

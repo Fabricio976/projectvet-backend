@@ -1,6 +1,7 @@
 package com.project.TestUnit.Service;
 
 import com.project.model.dto.AnimalDTO;
+import com.project.model.dto.AnimalResponseDTO;
 import com.project.model.entitys.Animal;
 import com.project.model.entitys.Usuario;
 import com.project.model.exeptions.AnimalNotFoundException;
@@ -42,6 +43,7 @@ class AnimalServiceTest {
     private Usuario usuario;
     private AnimalDTO animalDTO;
     private Pageable pageable;
+    private AnimalResponseDTO animalResponseDTO;
 
     @BeforeEach
     void setUp() {
@@ -132,9 +134,7 @@ class AnimalServiceTest {
         when(animalRepository.existsByRg(anyInt())).thenReturn(false);
         when(animalRepository.save(any(Animal.class))).thenReturn(animal);
 
-        String result = animalService.registerAnimal(animalDTO);
-
-        assertEquals("Animal Registrado!", result);
+        Animal result = animalService.registerAnimal(animalDTO);
 
         ArgumentCaptor<Animal> captor = ArgumentCaptor.forClass(Animal.class);
         verify(animalRepository).save(captor.capture());
