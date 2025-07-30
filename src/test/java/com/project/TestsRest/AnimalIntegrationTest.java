@@ -40,7 +40,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(newAnimal)
                 .when()
-                .post("/animal/register")
+                .post("/animals/register")
                 .then()
                 .statusCode(200)
                 .body("message", equalTo("Animal registrado com sucesso!"))
@@ -68,7 +68,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(newAnimal)
                 .when()
-                .post("/animal/register")
+                .post("/animals/register")
                 .then()
                 .statusCode(200);
 
@@ -77,7 +77,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + clientToken)
                 .when()
-                .get("/animal/searchAll?page=0&size=5")
+                .get("/animals/searchAll?page=0&size=5")
                 .then()
                 .statusCode(200)
                 .body("page.totalElements", greaterThanOrEqualTo(1))
@@ -104,7 +104,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(animal1)
                 .when()
-                .post("/animal/register")
+                .post("/animals/register")
                 .then()
                 .statusCode(200);
 
@@ -156,7 +156,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + anotherToken)
                 .body(animal2)
                 .when()
-                .post("/animal/register")
+                .post("/animals/register")
                 .then()
                 .statusCode(200);
 
@@ -165,7 +165,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + managerToken)
                 .when()
-                .get("/animal/searchAll?page=0&size=5")
+                .get("/animals/searchAll?page=0&size=5")
                 .then()
                 .statusCode(200)
                 .body("page.totalElements", greaterThanOrEqualTo(2))
@@ -193,7 +193,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(newAnimal)
                 .when()
-                .post("/animal/register")
+                .post("/animals/register")
                 .then()
                 .statusCode(200);
 
@@ -201,7 +201,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + managerToken)
                 .when()
-                .get("/animal/searchByUserCpf/" + clientCpf)
+                .get("/animals/searchByUserCpf/" + clientCpf)
                 .then()
                 .statusCode(200)
                 .body("name", hasItem("Rex"));
@@ -226,7 +226,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(newAnimal)
                 .when()
-                .post("/animal/register")
+                .post("/animals/register")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -246,7 +246,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(updatedAnimal)
                 .when()
-                .patch("/animal/editAnimal/" + idCriat)
+                .patch("/animals/editAnimal/" + idCriat)
                 .then()
                 .statusCode(200)
                 .body("message", equalTo("Editado com Sucesso!"));
@@ -257,7 +257,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + managerToken)
                 .when()
-                .get("/animal/search/" + idCriat)
+                .get("/animals/search/" + idCriat)
                 .then()
                 .statusCode(200)
                 .body("name", equalTo("Bolota"));
@@ -282,7 +282,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(newAnimal)
                 .when()
-                .post("/animal/register")
+                .post("/animals/register")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -292,7 +292,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + managerToken)
                 .when()
-                .get("/animal/animalRg/" + rgCriat)
+                .get("/animals/animalRg/" + rgCriat)
                 .then()
                 .statusCode(200)
                 .body("name", equalTo("Pudim"));

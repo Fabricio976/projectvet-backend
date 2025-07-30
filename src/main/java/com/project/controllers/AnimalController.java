@@ -23,22 +23,26 @@ import com.project.services.AnimalService;
 import static org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO;
 
 @RestController
-@RequestMapping("/projectvet/animal")
+@RequestMapping("/projectvet/animals")
 @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)
 public class AnimalController {
 
-    @Autowired
-    private AnimalService animalService;
+    private final AnimalService animalService;
 
-    @Autowired
-    private AnimalRepository animalRepository;
+    private final AnimalRepository animalRepository;
+
+    public AnimalController(AnimalService animalService, AnimalRepository animalRepository) {
+        this.animalService = animalService;
+        this.animalRepository = animalRepository;
+    }
 
     private ResponseEntity<Map<String, String>> response(String message) {
         return ResponseEntity.ok(Map.of("message", message));
     }
 
-    @GetMapping("/searchAll")
-    public Page<Animal> searchAllAnimals(
+    // GET /projectvet/animals?page=0&size=5
+    @GetMapping
+    public Page<Animal> getAllAnimals(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             Authentication auth) {
@@ -50,26 +54,28 @@ public class AnimalController {
         return animalService.searchAllAnimalsByUser(userId, isManager, pageable);
     }
 
-
-    @GetMapping("/search/{id}")
-    public ResponseEntity<Animal> searchById(@PathVariable String id) {
+    // GET /projectvet/animals/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<Animal> getById(@PathVariable String id) {
         return animalRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/searchByUserCpf/{cpf}")
-    public List<Animal> searchByResponsible(@PathVariable String cpf) {
+    // GET /projectvet/animals/by-user/{cpf}
+    @GetMapping("/by-user/{cpf}")
+    public List<Animal> getByUserCpf(@PathVariable String cpf) {
         return animalRepository.findAnimalsByUserCpf(cpf);
     }
 
-    @GetMapping("/animalRg/{rg}")
-    public Optional<Animal> getAnimaisByRg(@PathVariable int rg) {
-        return animalService.findByRg(rg);
+    // GET /projectvet/animals/by-rg/{rg}
+    @GetMapping("/by-rg/{rg}")
+    public Optional<Animal> getByRg(@PathVariable int rg) {return animalService.findByRg(rg);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerAnimal(@RequestBody AnimalDTO data) {
+    // POST /projectvet/animals
+    @PostMapping
+    public ResponseEntity<?> createAnimal(@RequestBody AnimalDTO data) {
         Animal result = animalService.registerAnimal(data);
         return ResponseEntity.ok().body(Map.of("message", "Animal registrado com sucesso!",
                 "animal", new AnimalResponseDTO(result.getId(), result.getRg(), result.getName())));

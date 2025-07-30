@@ -42,7 +42,7 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(animal)
                 .when()
-                .post("/animal/register")
+                .post("/animals/register")
                 .then()
                 .statusCode(200)
                 .extract()
