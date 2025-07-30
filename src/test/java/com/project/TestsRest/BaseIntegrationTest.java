@@ -50,7 +50,7 @@ public abstract class BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(clientDTO)
                 .when()
-                .post("/register/client")
+                .post("/auth/client")
                 .then()
                 .statusCode(200);
 
@@ -59,7 +59,7 @@ public abstract class BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(auth)
                 .when()
-                .post("/login")
+                .post("/auth/login")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -77,7 +77,7 @@ public abstract class BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(managerDTO)
                 .when()
-                .post("/register/manager")
+                .post("/auth/manager")
                 .then()
                 .statusCode(200);
 
@@ -86,7 +86,7 @@ public abstract class BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(auth)
                 .when()
-                .post("/login")
+                .post("/auth/login")
                 .then()
                 .statusCode(200)
                 .extract()

@@ -21,22 +21,27 @@ import java.util.Optional;
 @RequestMapping("/projectvet/clinical-records")
 public class ClinicalRecordController {
 
-    @Autowired
-    private ClinicalRecordService clinicalRecordService;
+    private final ClinicalRecordService clinicalRecordService;
 
-    @Autowired
-    private ClinicalRecordRepository clinicalRecordRepository;
+    private final ClinicalRecordRepository clinicalRecordRepository;
 
-    @Autowired
-    private AnimalRepository animalRepository;
+    private final AnimalRepository animalRepository;
 
-    @PostMapping("/create")
+    public ClinicalRecordController(ClinicalRecordService clinicalRecordService, ClinicalRecordRepository clinicalRecordRepository, AnimalRepository animalRepository) {
+        this.clinicalRecordService = clinicalRecordService;
+        this.clinicalRecordRepository = clinicalRecordRepository;
+        this.animalRepository = animalRepository;
+    }
+
+    //  POST /projectvet/clinical-records
+    @PostMapping
     public ResponseEntity<Map<String, String>> create(@RequestBody @Valid ClinicalRecordDTO dto) {
         ClinicalRecord result = clinicalRecordService.createRecord(dto);
         return ResponseEntity.ok(Map.of("message", "Ficha registrada com sucesso!", "id", result.getId()));
     }
 
-    @PatchMapping("/edit/{id}")
+    //  PATCH /projectvet/clinical-records/{id}
+    @PatchMapping("/{id}")
     public String updateRecord(@PathVariable String id, @RequestBody ClinicalRecordDTO dto) {
         ClinicalRecord record = clinicalRecordRepository.findById(id)
                 .orElseThrow(() -> new ClinicalRecordNotFoundException("Ficha clínica não encontrada"));
@@ -52,7 +57,8 @@ public class ClinicalRecordController {
         return "Ficha de consulta atualizada com sucesso!";
     }
 
-    @DeleteMapping("/delete/{id}")
+    //  DELETE /projectvet/clinical-records/{id}
+    @DeleteMapping("/{id}")
     public String deleteRecord(@PathVariable String id) {
         ClinicalRecord record = clinicalRecordRepository.findById(id)
                 .orElseThrow(() -> new ClinicalRecordNotFoundException("Ficha clínica não encontrada"));

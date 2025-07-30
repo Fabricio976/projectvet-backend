@@ -18,16 +18,21 @@ import java.util.List;
 @RequestMapping("/projectvet/appointments")
 public class AppointmentController {
 
-    @Autowired
-    private AppointmentService appointmentService;
+    private final AppointmentService appointmentService;
 
-    @PostMapping("/solicitar")
+    public AppointmentController(AppointmentService appointmentService) {
+        this.appointmentService = appointmentService;
+    }
+
+    //  POST /projectvet/appointments
+    @PostMapping
     public ResponseEntity<String> requestAppointment(@RequestBody AppointmentDTO dto) {
         String response = appointmentService.requestAppointment(dto);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/confirm/{id}")
+    //  PUT /projectvet/appointments/{id}/confirmation
+    @PutMapping("/{id}/confimation")
     public ResponseEntity<Appointment> confirmAppointment(
             @PathVariable String id,
             @RequestBody AppointmentConfirmationDTO dto) {
@@ -36,7 +41,8 @@ public class AppointmentController {
         );
     }
 
-    @PostMapping("/reject/{id}")
+    //  POST /projectvet/appointments
+    @PutMapping("/{id}/rejection")
     public ResponseEntity<Appointment> rejectAppointment(
             @PathVariable String id,
             @RequestParam(required = false) String adminNotes) {

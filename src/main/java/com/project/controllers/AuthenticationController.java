@@ -20,30 +20,36 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/projectvet")
+@RequestMapping("/projectvet/auth")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
-    @PostMapping("/code-forgot")
+    public AuthenticationController(AuthenticationManager authenticationManager, TokenService tokenService, UsuarioService usuarioService) {
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+        this.usuarioService = usuarioService;
+    }
+
+    // POST /auth/recovery-code
+    @PostMapping("/recovery-code")
     public ResponseEntity<Map<String, String>> recoveryCode(@RequestBody Usuario usuario) {
         String result = usuarioService.requestRecoveryCode(usuario.getEmail());
         return response("message", result);
     }
 
-    @PostMapping("/verify-code")
+    // POST /auth/verify-recovery
+    @PostMapping("/verify-recovery")
     public ResponseEntity<Map<String, String>> verifyCode(@RequestBody Map<String, String> request) {
         usuarioService.checkCode(request.get("email"), request.get("codeRecoveryPassword"));
         return response("message", "Código válido");
     }
 
+    // POST /auth/change-password
     @PostMapping("/change-password")
     public ResponseEntity<Map<String, String>> changePassword(@RequestBody Usuario usuario) {
         usuarioService.changePassword(usuario);
@@ -65,13 +71,13 @@ public class AuthenticationController {
     }
 
 
-    @PostMapping("/register/client")
+    @PostMapping("/client")
     public ResponseEntity<Map<String, String>> registerClient(@RequestBody @Valid RegisterUserDTO data) {
         usuarioService.registerUser(data);
         return response("message", "Usuário cadastrado com sucesso!");
     }
 
-    @PostMapping("/register/manager")
+    @PostMapping("/manager")
     public ResponseEntity<Map<String, String>> registerFuncionario(@RequestBody @Valid RegisterUserDTO data) {
         usuarioService.registerManager(data);
         return response("message", "Usuário cadastrado com sucesso!");

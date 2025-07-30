@@ -81,8 +81,9 @@ public class AnimalController {
                 "animal", new AnimalResponseDTO(result.getId(), result.getRg(), result.getName())));
     }
 
-    @PatchMapping("/editAnimal/{id}")
-    public ResponseEntity<Map<String, String>> editAnimal(@PathVariable String id, @RequestBody Animal animal) {
+    //  PATCH /projectvet/animals/{id}
+    @PatchMapping("/{id}")
+    public ResponseEntity<Map<String, String>> updateAnimal(@PathVariable String id, @RequestBody Animal animal) {
         animal.setId(id);
         Optional.of(animal)
                 .filter(a -> id.equals(a.getId()))
@@ -92,7 +93,8 @@ public class AnimalController {
         return response(result);
     }
 
-    @DeleteMapping("/delete/{id}")
+    //  DELETE /projectvet/animals/{id}
+    @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteAnimal(@PathVariable String id) {
         animalService.excluir(id);
         return response("Animal excluído com sucesso!");

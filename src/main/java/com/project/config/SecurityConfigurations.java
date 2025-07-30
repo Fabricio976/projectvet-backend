@@ -28,33 +28,31 @@ public class SecurityConfigurations {
 
     // Não requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/projectvet/login",
-            "/projectvet/register/**",
-            "/projectvet/code-forgot",
-            "/projectvet/verify-code",
-            "/projectvet/change-password"
+            "/projectvet/auth/login",
+            "/projectvet/auth/register/**",
+            "/projectvet/auth/recovery-code",
+            "/projectvet/auth/verify-code",
+            "/projectvet/auth/change-password"
     };
 
     // Requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
-            "/projectvet/animal/**",
+            "/projectvet/animals/**",
             "/images/**",
             "/projectvet/appointments/**"//só para teste, manda email para mim mesmo que é adm
     };
 
     // Só podem ser acessador por usuários cliente
     public static final String[] ENDPOINTS_CUSTOMER = {
-            "/projectvet/animal/register",
-            "/projectvet/animal/editAnimal",
+            "/projectvet/animals",
+            "/projectvet/animals/*",
     };
 
     // Só podem ser acessador por usuários administradores
     public static final String[] ENDPOINTS_ADMIN = {
             "/projectvet/animal/**",
-            "/projectvet/appointments/pending",
             "/projectvet/clinical-records/**",
-            "/projectvet/appointments/confirm",
-            "/projectvet/appointments/reject",
+            "/projectvet/appointments/**"
     };
 
 
