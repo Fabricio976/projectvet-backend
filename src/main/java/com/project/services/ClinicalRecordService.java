@@ -15,11 +15,14 @@ import java.util.List;
 @Service
 public class ClinicalRecordService {
 
-    @Autowired
-    private AnimalRepository animalRepository;
+    private final AnimalRepository animalRepository;
 
-    @Autowired
-    private ClinicalRecordRepository clinicalRecordRepository;
+    private final ClinicalRecordRepository clinicalRecordRepository;
+
+    public ClinicalRecordService(AnimalRepository animalRepository, ClinicalRecordRepository clinicalRecordRepository) {
+        this.animalRepository = animalRepository;
+        this.clinicalRecordRepository = clinicalRecordRepository;
+    }
 
     public ClinicalRecord createRecord(ClinicalRecordDTO dto) {
         Animal animal = animalRepository.findByRg(dto.rg())

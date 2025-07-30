@@ -23,14 +23,17 @@ import com.project.model.repositorys.UserRepository;
 @Transactional
 public class UsuarioService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private SecurityConfigurations securityConfiguration;
+    private final SecurityConfigurations securityConfiguration;
 
-    @Autowired
-    private ManagerAdmin managerAdmin;
+    private final ManagerAdmin managerAdmin;
+
+    public UsuarioService(UserRepository userRepository, SecurityConfigurations securityConfiguration, ManagerAdmin managerAdmin) {
+        this.userRepository = userRepository;
+        this.securityConfiguration = securityConfiguration;
+        this.managerAdmin = managerAdmin;
+    }
 
     public void registerUser(RegisterUserDTO data) {
         checkIfEmailExists(data.email());

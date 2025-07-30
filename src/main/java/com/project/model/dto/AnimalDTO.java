@@ -1,9 +1,6 @@
 package com.project.model.dto;
 
-import com.project.model.entitys.Animal;
-
 public record AnimalDTO(
-        String id,
         Integer rg,
         String name,
         Integer age,
@@ -11,5 +8,5 @@ public record AnimalDTO(
         String specie,
         String responsible,
         String photoUrl
-) {}
+) { }
 

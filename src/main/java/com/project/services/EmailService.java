@@ -27,14 +27,17 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
-    @Autowired
-    private Configuration fmConfiguration;
+    private final Configuration fmConfiguration;
 
     @Value("${spring.mail.username}")
     private String remetente;
+
+    public EmailService(JavaMailSender javaMailSender, Configuration fmConfiguration) {
+        this.javaMailSender = javaMailSender;
+        this.fmConfiguration = fmConfiguration;
+    }
 
     /**
      * envia um email de texto para mudança da senha

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import com.project.model.entitys.Imagem;
 import com.project.model.repositorys.ImagemRepository;
@@ -23,12 +24,15 @@ public class ImagemService {
     @Value("${contato.disco.diretorio-imagens}")
     private String diretorioImagens;
 
-    @Autowired
-    private ImagemRepository imagemRepository;
+    private final ImagemRepository imagemRepository;
+
+    public ImagemService(ImagemRepository imagemRepository) {
+        this.imagemRepository = imagemRepository;
+    }
 
     public String salvar(MultipartFile arquivo, String nomeImagem) {
         Path diretorioImagemPath = Paths.get(raiz, diretorioImagens);
-        Path arquivoPath = diretorioImagemPath.resolve(arquivo.getOriginalFilename());
+        Path arquivoPath = diretorioImagemPath.resolve(Objects.requireNonNull(arquivo.getOriginalFilename()));
 
         String nomeBase = nomeImagem;
         String extensao = "";

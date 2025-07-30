@@ -62,6 +62,17 @@ class AnimalServiceTest {
                 .dateRegister(new Date())
                 .build();
 
+        animalDTO = new AnimalDTO(
+                12345678,
+                "Rex",
+                5,
+                "Labrador",
+                "Dog",
+                "123.456.789-01",
+                ""
+        );
+
+
         pageable = PageRequest.of(0, 10);
     }
 

@@ -24,13 +24,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AnimalService {
 
-    @Autowired
-    private AnimalRepository animalRepository;
+    private final AnimalRepository animalRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     private final Random random = new Random();
+
+    public AnimalService(AnimalRepository animalRepository, UserRepository userRepository) {
+        this.animalRepository = animalRepository;
+        this.userRepository = userRepository;
+    }
 
     private int generateUniqueRg() {
         return generateRgStream()

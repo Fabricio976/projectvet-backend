@@ -22,22 +22,25 @@ import java.util.Map;
 @Service
 public class AppointmentService {
 
-    @Autowired
-    private AppointmentRepository appointmentRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    @Autowired
-    private UserRepository usuarioRepository;
+    private final UserRepository usuarioRepository;
 
-    @Autowired
-    private AnimalRepository animalRepository;
+    private final AnimalRepository animalRepository;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
     @Value("${spring.mail.username}")
     private String adminEmail;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+
+    public AppointmentService(AppointmentRepository appointmentRepository, UserRepository usuarioRepository, AnimalRepository animalRepository, EmailService emailService) {
+        this.appointmentRepository = appointmentRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.animalRepository = animalRepository;
+        this.emailService = emailService;
+    }
 
     public String requestAppointment(AppointmentDTO data) {
         UserDetails user = usuarioRepository.findByEmail(data.userEmail());
