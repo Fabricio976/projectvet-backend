@@ -28,8 +28,7 @@ public class SecurityConfigurations {
 
     // Não requerem autenticação para serem acessados
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/projectvet/auth/login",
-            "/projectvet/auth/register/**",
+            "/projectvet/auth/**",
             "/projectvet/auth/recovery-code",
             "/projectvet/auth/verify-code",
             "/projectvet/auth/change-password"
@@ -50,7 +49,7 @@ public class SecurityConfigurations {
 
     // Só podem ser acessador por usuários administradores
     public static final String[] ENDPOINTS_ADMIN = {
-            "/projectvet/animal/**",
+            "/projectvet/animals/**",
             "/projectvet/clinical-records/**",
             "/projectvet/appointments/**"
     };

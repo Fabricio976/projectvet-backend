@@ -121,7 +121,7 @@ public class AnimalIntegrationTest extends BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .body(newClient)
                 .when()
-                .post("/auth/register/client")
+                .post("/auth/client")
                 .then()
                 .statusCode(200);
 

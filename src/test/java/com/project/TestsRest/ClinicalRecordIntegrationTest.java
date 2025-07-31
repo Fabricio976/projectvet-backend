@@ -42,7 +42,7 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(animal)
                 .when()
-                .post("/animals/register")
+                .post("/animals")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -61,7 +61,7 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + managerToken)
                 .body(clinicalDTO)
                 .when()
-                .post("/clinical-records/create")
+                .post("/clinical-records")
                 .then()
                 .statusCode(200)
                 .body("message", equalTo("Ficha registrada com sucesso!"));
@@ -80,11 +80,11 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + managerToken)
                 .body(clinicalDTO)
                 .when()
-                .post("/clinical-records/create")
+                .post("/clinical-records")
                 .then()
                 .statusCode(200)
                 .extract()
-                .path("id"); // supondo que o ID seja retornado na resposta
+                .path("id");
 
         // Atualiza a ficha
         clinicalDTO.put("description", "Consulta atualizada: dor melhorou.");
@@ -94,7 +94,7 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + managerToken)
                 .body(clinicalDTO)
                 .when()
-                .patch("/clinical-records/edit/" + recordId)
+                .patch("/clinical-records/" + recordId)
                 .then()
                 .statusCode(200)
                 .body(equalTo("Ficha de consulta atualizada com sucesso!"));
@@ -113,7 +113,7 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + managerToken)
                 .body(clinicalDTO)
                 .when()
-                .post("/clinical-records/create")
+                .post("/clinical-records")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -123,7 +123,7 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer " + managerToken)
                 .when()
-                .delete("/clinical-records/delete/" + recordId)
+                .delete("/clinical-records/" + recordId)
                 .then()
                 .statusCode(200)
                 .body(equalTo("Ficha de consulta excluída com sucesso!"));
@@ -141,7 +141,7 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + managerToken)
                 .body(clinicalDTO)
                 .when()
-                .post("/clinical-records/create")
+                .post("/clinical-records")
                 .then()
                 .statusCode(404)
                 .body((equalTo("Animal não encontrado")));
@@ -159,7 +159,7 @@ public class ClinicalRecordIntegrationTest extends BaseIntegrationTest {
                 .header("Authorization", "Bearer " + clientToken)
                 .body(clinicalDTO)
                 .when()
-                .post("/clinical-records/create")
+                .post("/clinical-records")
                 .then()
                 .statusCode(403);
     }
